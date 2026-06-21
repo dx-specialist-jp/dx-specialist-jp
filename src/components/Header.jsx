@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 export default function Header() {
   return (
@@ -7,7 +7,21 @@ export default function Header() {
         <Link to="/" className="site-title" aria-label="GovDX Today トップページ">
           GovDX Today
         </Link>
-        <span className="site-tagline">行政DX・AI活用 X投稿ダイジェスト</span>
+        <nav className="header-nav" aria-label="メインナビゲーション">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+          >
+            今日
+          </NavLink>
+          <NavLink
+            to="/archive"
+            className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+          >
+            アーカイブ
+          </NavLink>
+        </nav>
       </div>
     </header>
   );

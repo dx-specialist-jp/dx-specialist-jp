@@ -2,8 +2,9 @@
   "dates": [
     {
       "date": "2026-06-21",
-      "summary_short": "デジタル庁・総務省の最新投稿 4件 ── 源内利用100万件超など",
-      "post_count": 4
+      "summary_short": "生成AIガイドライン2.0版対応・源内100万件突破など4件",
+      "article_count": 3,
+      "has_security_alert": false
     }
   ]
 }
