@@ -18,6 +18,9 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: チェックアウト
@@ -44,17 +47,23 @@ jobs:
       - name: Vite ビルド
         run: npm run build
 
-      - name: 変更をコミット・プッシュ
+      - name: データをコミット・プッシュ
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/ docs/
+          git add public/data/
           git diff --staged --quiet && echo "変更なし" && exit 0
           git commit -m "chore: 日次更新 $(date -u +'%Y-%m-%d')"
           git push
 
-      - name: GitHub Pages を強制リデプロイ
-        run: |
-          gh api repos/${{ github.repository }}/pages/builds -X POST || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: GitHub Pages 設定
+        uses: actions/configure-pages@v5
+
+      - name: Pages アーティファクトをアップロード
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+      - name: GitHub Pages にデプロイ
+        id: deployment
+        uses: actions/deploy-pages@v4
