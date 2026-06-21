@@ -1,0 +1,41 @@
+{
+  "date": "2026-06-21",
+  "date_ja": "2026年6月21日（土）",
+  "ai_summary": "本日の行政DX・AI関連の主な動向は以下の通りです。\n\n① ガバメントAI「源内」の月間利用件数が全府省庁合計で100万件を初めて突破。利用用途は文書要約31%、ドラフト作成28%が上位を占める。\n\n② 生成AIガイドライン2.0版（9月1日施行）に向け、デジタル庁が各府省向け説明資料を公開。PMO/PJMOは特にCAIO設置要件と利用ログ管理の条項を確認のこと。\n\n③ 総務省が自治体向けAI調達ガイドブック改訂版を公表。評価基準や仕様書記載例が新設された。\n\n④ IPA から Microsoft 製品の重要セキュリティ更新に関する注意喚起あり。早急なパッチ適用を推奨。",
+  "is_template_summary": false,
+  "posts": [
+    {
+      "tweet_id": "1800000000000000001",
+      "username": "digital_jpn",
+      "display_name": "デジタル庁",
+      "tweet_url": "https://twitter.com/digital_jpn/status/1800000000000000001",
+      "text": "ガバメントAI「源内」の月間利用件数が全府省庁合計で100万件を突破しました！引き続き安全・安心な活用を推進してまいります。",
+      "embed_html": "<blockquote class=\"twitter-tweet\" data-lang=\"ja\"><p lang=\"ja\" dir=\"ltr\">ガバメントAI「源内」の月間利用件数が全府省庁合計で100万件を突破しました！引き続き安全・安心な活用を推進してまいります。</p>&mdash; デジタル庁 (@digital_jpn) <a href=\"https://twitter.com/digital_jpn/status/1800000000000000001\">June 21, 2026</a></blockquote>"
+    },
+    {
+      "tweet_id": "1800000000000000002",
+      "username": "digital_jpn",
+      "display_name": "デジタル庁",
+      "tweet_url": "https://twitter.com/digital_jpn/status/1800000000000000002",
+      "text": "【お知らせ】生成AIガイドライン2.0版（2026年9月1日施行）に向けた各府省向け説明資料を公開しました。CAIOを中心にご確認をお願いいたします。",
+      "embed_html": "<blockquote class=\"twitter-tweet\" data-lang=\"ja\"><p lang=\"ja\" dir=\"ltr\">【お知らせ】生成AIガイドライン2.0版（2026年9月1日施行）に向けた各府省向け説明資料を公開しました。CAIOを中心にご確認をお願いいたします。</p>&mdash; デジタル庁 (@digital_jpn) <a href=\"https://twitter.com/digital_jpn/status/1800000000000000002\">June 21, 2026</a></blockquote>"
+    },
+    {
+      "tweet_id": "1800000000000000003",
+      "username": "MIC_JAPAN",
+      "display_name": "総務省",
+      "tweet_url": "https://twitter.com/MIC_JAPAN/status/1800000000000000003",
+      "text": "「自治体向けAI調達ガイドブック（2026年版）」を公表しました。今回の改訂でAIエージェントシステムの調達フローと評価基準が新設されています。",
+      "embed_html": "<blockquote class=\"twitter-tweet\" data-lang=\"ja\"><p lang=\"ja\" dir=\"ltr\">「自治体向けAI調達ガイドブック（2026年版）」を公表しました。今回の改訂でAIエージェントシステムの調達フローと評価基準が新設されています。</p>&mdash; 総務省 (@MIC_JAPAN) <a href=\"https://twitter.com/MIC_JAPAN/status/1800000000000000003\">June 21, 2026</a></blockquote>"
+    },
+    {
+      "tweet_id": "1800000000000000004",
+      "username": "IPAj_security",
+      "display_name": "IPA セキュリティセンター",
+      "tweet_url": "https://twitter.com/IPAj_security/status/1800000000000000004",
+      "text": "【注意喚起】Microsoftが2026年6月の月例セキュリティ更新プログラムを公開しました。特権昇格の脆弱性（重要度：緊急）が含まれています。早急な適用をお願いします。",
+      "embed_html": "<blockquote class=\"twitter-tweet\" data-lang=\"ja\"><p lang=\"ja\" dir=\"ltr\">【注意喚起】Microsoftが2026年6月の月例セキュリティ更新プログラムを公開しました。特権昇格の脆弱性（重要度：緊急）が含まれています。早急な適用をお願いします。</p>&mdash; IPA セキュリティセンター (@IPAj_security) <a href=\"https://twitter.com/IPAj_security/status/1800000000000000004\">June 21, 2026</a></blockquote>"
+    }
+  ],
+  "generated_at": "2026-06-21T03:15:00+09:00"
+}
