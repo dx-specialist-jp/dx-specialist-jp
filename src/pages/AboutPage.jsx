@@ -11,11 +11,13 @@ export default function AboutPage() {
       <div className="main-content">
         <div className="about-body">
 
-          {/* 非営利・公益宣言 */}
+          {/* 非営利・公開情報のみ・個人情報不掲載 — 最上位に宣言 */}
           <div className="declaration-box" role="note" aria-label="重要な宣言">
             <p>
-              本サイトは非営利・非商業目的の個人運営サイトです。公開情報のみを取り扱い、
-              機密性情報・特定の個人情報は一切掲載しません。収益化・広告掲載は行っていません。
+              本サイトは<strong>非営利・非商業目的</strong>の個人運営サイトです。
+              取り扱う情報は<strong>すべて公開情報</strong>に限定しており、
+              機密性情報（機密性2以上）・特定の個人情報は一切掲載しません。
+              収益化・広告掲載・有料サービスは行っていません。
             </p>
           </div>
 
@@ -23,13 +25,14 @@ export default function AboutPage() {
           <section className="about-section" aria-labelledby="purpose-heading">
             <h2 className="about-section-title" id="purpose-heading">🎯 サイトの目的</h2>
             <p>
-              GovDX Today は、中央省庁・地方公共団体のPMO（プロジェクト管理オフィス）・
-              PJMO（プロジェクト管理支援）担当者を主な対象として、行政DX・AI活用に関する
-              情報を毎日自動集約・要約するダイジェストサイトです。
+              GovDX Today は、中央省庁・地方公共団体の
+              <strong>PMO（プロジェクト管理オフィス）・PJMO（プロジェクト管理支援）担当者</strong>
+              を主な対象として、行政DX・AI活用に関する情報を毎日0時に自動集約・要約するダイジェストサイトです。
             </p>
             <p>
-              情報収集にかかる時間を削減し、担当者が政策立案・プロジェクト管理に集中できる
-              環境づくりに貢献することを目指しています。
+              政府公式RSSと無料ニュースメディアを横断的に収集し、AIが「PMO/PJMOとして何を確認・対応すべきか」
+              の観点で要約・優先順位付けを行います。
+              毎朝5分で最重要情報をキャッチアップし、担当者が本来業務に集中できる環境づくりへの貢献を目指しています。
             </p>
           </section>
 
@@ -38,24 +41,28 @@ export default function AboutPage() {
             <h2 className="about-section-title" id="policy-heading">📋 掲載方針</h2>
             <ul>
               <li>掲載情報は<strong>すべて公開情報</strong>（政府・省庁の公式発表、無料で閲覧可能なニュース記事等）に限定しています</li>
-              <li>ペイウォール（有料会員限定）記事は収集対象外としています</li>
-              <li><strong>機密性情報</strong>（機密性2以上の情報）は一切掲載しません</li>
-              <li><strong>特定の個人情報</strong>（氏名・住所・連絡先等の個人を識別できる情報）は掲載しません</li>
-              <li>政府・行政機関のDX・AI活用に関連する情報を優先的に掲載します</li>
+              <li>ペイウォール（有料会員限定）記事は収集・掲載対象外としています</li>
+              <li><strong>機密性情報</strong>（機密性2以上の行政情報）は収集も掲載も行いません</li>
+              <li><strong>特定の個人情報</strong>（氏名・住所・連絡先・マイナンバー等、個人を識別できる情報）は掲載しません</li>
+              <li>中央省庁PMO/PJMOの業務に関連する情報を優先し、AI（Gemini）が重要度を判定して掲載します</li>
+              <li>要約はAIが自動生成するため、必ず出典元で原文を確認してください</li>
             </ul>
           </section>
 
-          {/* AI要約について */}
+          {/* AIによる要約 */}
           <section className="about-section" aria-labelledby="ai-heading">
-            <h2 className="about-section-title" id="ai-heading">🤖 AIによる要約について</h2>
+            <h2 className="about-section-title" id="ai-heading">🤖 AIによる要約・フィルタリングについて</h2>
             <p>
-              記事の要約・分類にはGoogle Gemini API（<code>gemini-1.5-flash</code>）を使用しています。
-              AIが生成した要約は、原文の趣旨を伝えることを目的としていますが、
-              <strong>正確性・完全性・最新性を保証するものではありません</strong>。
+              記事の要約・優先度判定・カテゴリ分類にはGoogle Gemini API
+              （<code>gemini-1.5-flash</code>、無料枠使用）を利用しています。
+              要約は「中央省庁PMO/PJMOが業務で活用できる観点」で生成しており、
+              具体的な対応事項・確認すべき文書・期限の目安を含むよう設計しています。
             </p>
             <p>
-              業務上の判断や意思決定を行う際は、必ず出典元の原文をご確認ください。
-              AIによる要約には誤り（ハルシネーション）が含まれる場合があります。
+              ただし、<strong>AIの要約は正確性・完全性を保証するものではありません</strong>。
+              誤情報（ハルシネーション）が含まれる場合があります。
+              業務上の判断・意思決定・稟議・調達対応等には、必ず出典元の原文および
+              所管部署の一次情報をご確認ください。
             </p>
           </section>
 
@@ -68,9 +75,11 @@ export default function AboutPage() {
             </p>
             <ul>
               <li>掲載情報の正確性・完全性・最新性について、いかなる保証もしません</li>
-              <li>リンク先（出典元）のサイト内容および利用に関して責任を負いません</li>
+              <li>AIによる要約・フィルタリングの結果には誤りが含まれる場合があります</li>
+              <li>リンク先（出典元）のサイト内容・可用性および利用に関して責任を負いません</li>
               <li>本サイトの内容は予告なく変更・削除される場合があります</li>
-              <li>システム障害・メンテナンス等により、予定された更新が行われない場合があります</li>
+              <li>システム障害・GitHub Actions障害・Gemini API障害等により、予定された更新が行われない場合があります</li>
+              <li>本サイトは個人が運営するものであり、いかなる組織・省庁の公式見解も代表しません</li>
             </ul>
           </section>
 
@@ -80,9 +89,14 @@ export default function AboutPage() {
             <p>
               掲載されている各記事・情報の著作権は、それぞれの出典元（政府機関・報道機関等）に帰属します。
               本サイトは報道・批評・研究目的での引用（著作権法第32条）の範囲内での情報提供を行っています。
+              AI要約は原文の転載ではなく二次的著作物としての要約です。
             </p>
             <p>
-              著作権上の問題がある場合は、下記の連絡先までお知らせください。速やかに対応いたします。
+              著作権上の問題、または掲載内容に関するお問い合わせは、
+              <a href="https://github.com/dx-specialist-jp/dx-specialist-jp/issues" target="_blank" rel="noopener noreferrer">
+                GitHubのIssue
+              </a>
+              よりご連絡ください。速やかに対応いたします。
             </p>
           </section>
 
@@ -92,9 +106,10 @@ export default function AboutPage() {
             <ul>
               <li>本サイトは<strong>一切の商業目的を持たない</strong>個人運営のサイトです</li>
               <li>広告掲載、アフィリエイト、スポンサーシップ等による収益化は行っていません</li>
-              <li>有料会員制度・課金機能は設けていません</li>
+              <li>有料会員制度・課金機能・寄付受付は設けていません</li>
               <li>掲載情報の販売・2次利用による収益化は行っていません</li>
-              <li>情報収集・要約に使用するAI APIは個人が費用を負担しています</li>
+              <li>情報収集・要約に使用するAI API費用・サーバー費用は個人が負担しています</li>
+              <li>運営主体はいかなる政党・企業・団体とも関係を持っていません</li>
             </ul>
           </section>
 
@@ -102,47 +117,58 @@ export default function AboutPage() {
           <section className="about-section" aria-labelledby="privacy-heading">
             <h2 className="about-section-title" id="privacy-heading">🔒 プライバシーについて</h2>
             <p>
-              本サイトはGitHub Pagesによる静的サイトです。閲覧者の個人情報・アクセスログの
-              独自収集は行っていません。ただし、GitHub・Google Fonts等の外部サービスによる
-              技術的なアクセス記録が行われる場合があります。
+              本サイトはGitHub Pagesによる<strong>完全静的サイト</strong>です。
+              閲覧者の個人情報・アクセスログの独自収集・分析は行っていません。
+              Cookie・追跡技術（トラッキング・フィンガープリント）は使用していません。
             </p>
             <p>
-              Cookieや追跡技術（トラッキング）は使用していません。
+              ただし、以下の外部サービスにより技術的なアクセス記録が行われる場合があります。
+              利用の際は各サービスのプライバシーポリシーをご確認ください。
             </p>
+            <ul>
+              <li>GitHub Pages（アクセスログ）</li>
+              <li>Google Fonts（フォントの読み込み）</li>
+            </ul>
           </section>
 
           {/* 更新ポリシー */}
           <section className="about-section" aria-labelledby="update-heading">
             <h2 className="about-section-title" id="update-heading">🔄 更新ポリシー</h2>
             <ul>
-              <li>毎日<strong>日本時間 0:00</strong>にGitHub Actionsによる自動更新を実施します</li>
-              <li>政府機関の公式RSSフィード・無料ニュースサイトから情報を収集します</li>
-              <li>AIによる要約・フィルタリング後、自動的に公開されます</li>
-              <li>システム障害・APIエラー等により更新が遅延または欠落する場合があります</li>
+              <li>毎日<strong>日本時間 0:00</strong>（UTC 15:00）にGitHub Actionsによる自動更新を実施します</li>
+              <li>政府公式RSSフィード（15ソース）・無料ニュースメディア（11ソース）から前日24時間分の記事を収集します</li>
+              <li>Google Gemini AIによる要約・フィルタリング・重要度判定を経て自動公開します</li>
+              <li>API障害・ネットワーク障害等により更新が遅延または欠落する場合があります</li>
               <li>過去90日分のアーカイブを保持します</li>
+              <li>手動更新も随時実施する場合があります</li>
             </ul>
           </section>
 
-          {/* 情報源 */}
+          {/* 情報源 — 最新ソース一覧に更新 */}
           <section className="about-section" aria-labelledby="sources-heading">
-            <h2 className="about-section-title" id="sources-heading">📡 主な情報源</h2>
-            <p><strong>政府・公的機関</strong></p>
+            <h2 className="about-section-title" id="sources-heading">📡 収集対象の情報源（全26ソース）</h2>
+
+            <p><strong>政府・公的機関（15ソース）</strong></p>
             <ul>
-              <li>JPCERT/CC（コンピュータ緊急対応チーム）</li>
-              <li>IPA（情報処理推進機構）セキュリティ情報</li>
-              <li>NISC（内閣サイバーセキュリティセンター）</li>
-              <li>デジタル庁 新着情報・note</li>
-              <li>総務省 報道発表</li>
-              <li>経済産業省 AI関連情報</li>
-              <li>政府CIOポータル</li>
+              <li><strong>セキュリティ:</strong> JPCERT/CC・IPA（情報処理推進機構）・NISC（内閣サイバーセキュリティセンター）・警察庁サイバー警察局</li>
+              <li><strong>デジタル庁:</strong> 新着情報・note・政府CIOポータル</li>
+              <li><strong>各省庁:</strong> 総務省・経済産業省・内閣府・内閣官房・国土交通省・厚生労働省・文部科学省・金融庁</li>
+              <li><strong>自治体基盤:</strong> J-LIS（地方公共団体情報システム機構）</li>
             </ul>
-            <p style={{ marginTop: '12px' }}><strong>無料ニュースメディア</strong></p>
+
+            <p style={{ marginTop: '14px' }}><strong>無料ニュースメディア（11ソース）</strong></p>
             <ul>
-              <li>ITmedia NEWS / AI+ / エンタープライズ</li>
-              <li>Internet Watch / クラウド Watch</li>
-              <li>@IT / ZDNet Japan / CNET Japan</li>
-              <li>NHKニュース（科学・IT）</li>
+              <li><strong>ITmedia系:</strong> NEWS / AI+ / エンタープライズ / @IT</li>
+              <li><strong>インプレス系:</strong> Internet Watch / クラウド Watch / IT Leaders</li>
+              <li><strong>専門IT媒体:</strong> ZDNet Japan / TechCrunch Japan</li>
+              <li><strong>行政専門:</strong> 自治体通信</li>
+              <li><strong>公共放送:</strong> NHKニュース（科学・IT）</li>
             </ul>
+
+            <p style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-muted)' }}>
+              ※ 有料会員限定（ペイウォール）記事は自動的に除外します。<br />
+              ※ 各ソースのRSSフィード状況により収集件数は変動します。
+            </p>
           </section>
 
         </div>
