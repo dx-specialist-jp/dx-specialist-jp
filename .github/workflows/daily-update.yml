@@ -52,3 +52,9 @@ jobs:
           git diff --staged --quiet && echo "変更なし" && exit 0
           git commit -m "chore: 日次更新 $(date -u +'%Y-%m-%d')"
           git push
+
+      - name: GitHub Pages を強制リデプロイ
+        run: |
+          gh api repos/${{ github.repository }}/pages/builds -X POST || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
