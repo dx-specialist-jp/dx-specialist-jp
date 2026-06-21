@@ -5,7 +5,7 @@
         "date": "2026-06-21",
         "date_ja": "2026年6月21日（日）",
         "title": "お知らせ：JPCERT/CC インターネット定点観測レポート［2026年1月1日～2026年3月31日］",
-        "summary": "",
+        "summary": "お知らせ：JPCERT/CC インターネット定点観測レポート［2026年1月1日～2026年3月31日］",
         "source": "JPCERT/CC 注意喚起",
         "url": "https://www.jpcert.or.jp/tsubame/report/report202601-03.html",
         "type": "government"
@@ -14,7 +14,7 @@
         "date": "2026-06-21",
         "date_ja": "2026年6月21日（日）",
         "title": "お知らせ：JPCERT/CC Eyes「TSUBAMEレポート Overflow（2026年1～3月）」",
-        "summary": "",
+        "summary": "お知らせ：JPCERT/CC Eyes「TSUBAMEレポート Overflow（2026年1～3月）」",
         "source": "JPCERT/CC 注意喚起",
         "url": "https://blogs.jpcert.or.jp/ja/2026/06/tsubame-overflow20260103.html",
         "type": "government"
@@ -23,7 +23,7 @@
         "date": "2026-06-21",
         "date_ja": "2026年6月21日（日）",
         "title": "お知らせ：JPCERT/CC Eyes「ツール分析結果シートのアップデート」",
-        "summary": "",
+        "summary": "お知らせ：JPCERT/CC Eyes「ツール分析結果シートのアップデート」",
         "source": "JPCERT/CC 注意喚起",
         "url": "https://blogs.jpcert.or.jp/ja/2026/06/tool_analysis_update.html",
         "type": "government"
@@ -32,7 +32,7 @@
         "date": "2026-06-21",
         "date_ja": "2026年6月21日（日）",
         "title": "お知らせ：インシデント報告Webフォームメンテナンス（2026年6月26日）のお知らせ",
-        "summary": "",
+        "summary": "お知らせ：インシデント報告Webフォームメンテナンス（2026年6月26日）のお知らせ",
         "source": "JPCERT/CC 注意喚起",
         "url": "https://www.jpcert.or.jp/maintenance20260615.html",
         "type": "government"
@@ -42,5 +42,5 @@
   "tag_counts": {
     "セキュリティ": 4
   },
-  "updated_at": "2026-06-21T10:04:20.696Z"
+  "updated_at": "2026-06-21T11:33:19.366Z"
 }
