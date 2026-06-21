@@ -23,28 +23,21 @@ const DATA_DIR = resolve(ROOT, 'public', 'data');
 // 中央省庁PMO/PJMO担当者が最低限押さえるべき公式情報源
 const GOV_SOURCES = [
   // ── セキュリティ（優先度最高）
-  { name: 'JPCERT/CC 注意喚起',        url: 'https://www.jpcert.or.jp/rss/jpcert-all.rdf',              type: 'security' },
-  { name: 'IPA 重要なセキュリティ情報', url: 'https://www.ipa.go.jp/security/security-alert/rss.rdf',   type: 'security' },
-  { name: 'NISC 新着情報',             url: 'https://www.nisc.go.jp/rss/nisc_alert.rdf',               type: 'security' },
-  { name: '警察庁 サイバー警察局',      url: 'https://www.npa.go.jp/rss.xml',                           type: 'security' },
+  { name: 'JPCERT/CC 注意喚起',        url: 'https://www.jpcert.or.jp/rss/jpcert-all.rdf',                type: 'security' },
+  { name: 'IPA 重要なセキュリティ情報', url: 'https://www.ipa.go.jp/security/alert-rss.rdf',              type: 'security' },
+  { name: 'NISC 新着情報',             url: 'https://www.nisc.go.jp/rss/nisc_alert.rdf',                 type: 'security' },
+  { name: '警察庁 サイバー警察局',      url: 'https://www.npa.go.jp/newlyarrived/rss20.xml',              type: 'security' },
 
   // ── デジタル庁（DX政策の中核）
-  { name: 'デジタル庁 新着情報',        url: 'https://www.digital.go.jp/feed',                          type: 'ai_government' },
-  { name: 'デジタル庁 note',            url: 'https://digital-gov.note.jp/rss',                         type: 'ai_government' },
-  { name: '政府CIOポータル',            url: 'https://cio.go.jp/rss.xml',                               type: 'ai_government' },
+  { name: 'デジタル庁 新着情報',        url: 'https://www.digital.go.jp/rss/news.xml',                   type: 'ai_government' },
+  { name: 'デジタル庁 note',            url: 'https://digital-gov.note.jp/rss',                           type: 'ai_government' },
 
   // ── 各省庁 DX・AI関連
-  { name: '総務省 報道発表',            url: 'https://www.soumu.go.jp/rss/topics.rdf',                  type: 'dx' },
-  { name: '経済産業省 新着情報',        url: 'https://www.meti.go.jp/press/rss.rdf',                    type: 'dx' },
-  { name: '内閣府 新着情報',            url: 'https://www.cao.go.jp/rss.rdf',                           type: 'dx' },
-  { name: '内閣官房 新着情報',          url: 'https://www.cas.go.jp/rss.rdf',                           type: 'dx' },
-  { name: '国土交通省 新着情報',        url: 'https://www.mlit.go.jp/rss.xml',                          type: 'dx' },
-  { name: '厚生労働省 新着情報',        url: 'https://www.mhlw.go.jp/rss/topics.rdf',                  type: 'dx' },
-  { name: '文部科学省 新着情報',        url: 'https://www.mext.go.jp/b_menu/list/rss.rdf',              type: 'dx' },
-  { name: '金融庁 新着情報',            url: 'https://www.fsa.go.jp/rss.xml',                           type: 'dx' },
-
-  // ── 自治体標準化・地方DX（横展開参考事例）
-  { name: 'J-LIS 地方公共団体情報システム機構', url: 'https://www.j-lis.go.jp/rss.xml',               type: 'dx' },
+  { name: '総務省 報道発表',            url: 'https://www.soumu.go.jp/news.rdf', charset: 'shift_jis',   type: 'dx' },
+  { name: '経済産業省 新着情報',        url: 'https://www.meti.go.jp/press/rss.rdf',                     type: 'dx' },
+  { name: '内閣府 新着情報',            url: 'https://www.cao.go.jp/rss/news.rdf',                       type: 'dx' },
+  { name: '厚生労働省 新着情報',        url: 'https://www.mhlw.go.jp/stf/news.rdf',                      type: 'dx' },
+  { name: '金融庁 新着情報',            url: 'https://www.fsa.go.jp/fsaNewsListAll_rss2.xml',             type: 'dx' },
 ];
 
 // ── 無料ニュース RSS ソース ───────────────────────────────────────────
@@ -58,15 +51,7 @@ const NEWS_SOURCES = [
 
   // インプレス系（クラウド・IT業界）
   { name: 'Internet Watch',          url: 'https://internet.watch.impress.co.jp/data/rss/1.0/iw/feed.rdf',  paywall: false },
-  { name: 'クラウド Watch',           url: 'https://cloud.watch.impress.co.jp/data/rss/1.0/cw/feed.rdf',    paywall: false },
-  { name: 'IT Leaders',              url: 'https://it.impress.com/rss/topNews.rdf',                          paywall: false },
-
-  // 専門IT媒体
-  { name: 'ZDNet Japan',             url: 'https://japan.zdnet.com/rss/index.xml',                           paywall: false },
-  { name: 'TechCrunch Japan',        url: 'https://jp.techcrunch.com/feed/',                                 paywall: false },
-
-  // 自治体・行政DX専門
-  { name: '自治体通信',               url: 'https://jichitai.works/feed/',                                    paywall: false },
+  { name: 'クラウド Watch',           url: 'https://cloud.watch.impress.co.jp/data/rss/1.0/clw/feed.rdf',   paywall: false },
 
   // 公共放送（政策・社会的文脈）
   { name: 'NHKニュース 科学・IT',     url: 'https://www.nhk.or.jp/rss/news/cat3.xml',                        paywall: false },
@@ -215,14 +200,20 @@ function parseRSS(xml, sourceName) {
 }
 
 // ── RSS フェッチ ──────────────────────────────────────────────────────
-async function fetchFeed(url, name) {
+async function fetchFeed(url, name, charset = null) {
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'GovDX-Today/1.0 (+https://github.com/dx-specialist-jp/govdxtoday)' },
       signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const xml = await res.text();
+    let xml;
+    if (charset) {
+      const buf = await res.arrayBuffer();
+      xml = new TextDecoder(charset).decode(buf);
+    } else {
+      xml = await res.text();
+    }
     return parseRSS(xml, name);
   } catch (err) {
     console.warn(`[WARN] ${name}: ${err.message}`);
@@ -529,7 +520,7 @@ async function main() {
   console.log('[INFO] 政府公式RSSを収集中...');
   const govArticlesRaw = [];
   for (const src of GOV_SOURCES) {
-    const items = await fetchFeed(src.url, src.name);
+    const items = await fetchFeed(src.url, src.name, src.charset);
     items.forEach((a) => govArticlesRaw.push({ ...a, articleType: src.type }));
     console.log(`[INFO]   ${src.name}: ${items.length}件`);
   }
