@@ -190,7 +190,7 @@ function parseRSS(xml, sourceName) {
 async function fetchFeed(url, name) {
   try {
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'GovDX-Today/1.0 (+https://github.com/dx-specialist-jp/dx-specialist-jp)' },
+      headers: { 'User-Agent': 'GovDX-Today/1.0 (+https://github.com/dx-specialist-jp/govdxtoday)' },
       signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

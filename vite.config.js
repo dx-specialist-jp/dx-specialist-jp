@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/dx-specialist-jp/',
+  base: '/govdxtoday/',
   build: {
     outDir: 'docs',
     emptyOutDir: true,

@@ -93,7 +93,7 @@ export default function AboutPage() {
             </p>
             <p>
               著作権上の問題、または掲載内容に関するお問い合わせは、
-              <a href="https://github.com/dx-specialist-jp/dx-specialist-jp/issues" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/dx-specialist-jp/govdxtoday/issues" target="_blank" rel="noopener noreferrer">
                 GitHubのIssue
               </a>
               よりご連絡ください。速やかに対応いたします。
