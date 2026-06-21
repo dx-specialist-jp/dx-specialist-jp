@@ -330,6 +330,66 @@ async function generateDxTip(date, model) {
   }
 }
 
+// ── tags.json 更新 ────────────────────────────────────────────────────
+function updateTagsIndex(date, dateJa, dayData) {
+  const tagsPath = resolve(DATA_DIR, 'tags.json');
+  let tagsData = { tags: {}, tag_counts: {}, updated_at: '' };
+  try { tagsData = JSON.parse(readFileSync(tagsPath, 'utf-8')); } catch { /* 新規 */ }
+
+  // 対象日の既存エントリを削除
+  for (const tag of Object.keys(tagsData.tags)) {
+    tagsData.tags[tag] = tagsData.tags[tag].filter((a) => a.date !== date);
+    if (tagsData.tags[tag].length === 0) delete tagsData.tags[tag];
+  }
+
+  // ニューストピックをカテゴリタグで登録
+  for (const topic of (dayData.news_topics || [])) {
+    if (!topic.category) continue;
+    const tag = topic.category;
+    if (!tagsData.tags[tag]) tagsData.tags[tag] = [];
+    tagsData.tags[tag].unshift({
+      date,
+      date_ja: dateJa,
+      title: topic.title,
+      summary: topic.summary || '',
+      source: topic.source || '',
+      url: topic.url || '',
+      relevance: topic.relevance || '',
+      type: 'news',
+    });
+  }
+
+  // 政府記事をセクションタイプで登録
+  const govArticles = [dayData.hero_article, ...(dayData.sub_articles || [])].filter(Boolean);
+  for (const article of govArticles) {
+    const sn = article.section_name || '';
+    let tag = '';
+    if (sn.includes('AI') || sn.includes('生成')) tag = '行政AI';
+    else if (sn.includes('DX')) tag = '行政DX';
+    else if (sn.includes('セキュリティ') || sn.includes('情報セキュリティ')) tag = 'セキュリティ';
+    if (!tag) continue;
+    if (!tagsData.tags[tag]) tagsData.tags[tag] = [];
+    tagsData.tags[tag].unshift({
+      date,
+      date_ja: dateJa,
+      title: article.title,
+      summary: article.summary || '',
+      source: article.source_name || '',
+      url: article.source_url || '',
+      type: 'government',
+    });
+  }
+
+  // カウント更新
+  tagsData.tag_counts = Object.fromEntries(
+    Object.entries(tagsData.tags).map(([k, v]) => [k, v.length])
+  );
+  tagsData.updated_at = new Date().toISOString();
+
+  writeFileSync(tagsPath, JSON.stringify(tagsData, null, 2), 'utf-8');
+  console.log('[INFO] tags.json 更新完了');
+}
+
 // ── index.json 更新 ───────────────────────────────────────────────────
 function updateIndex(date, summaryShort, articleCount, hasSecurityAlert) {
   const indexPath = resolve(DATA_DIR, 'index.json');
@@ -454,6 +514,9 @@ async function main() {
     ? `${heroArticle.title.slice(0, 30)}…など${total}件`
     : 'データなし';
   updateIndex(targetDate, summaryShort, total, securityAlerts.length > 0);
+
+  // ⑨ tags.json 更新
+  updateTagsIndex(targetDate, formatDateJa(targetDate), dayData);
 
   console.log('[INFO] 完了');
 }
