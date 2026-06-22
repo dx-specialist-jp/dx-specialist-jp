@@ -26,7 +26,7 @@ const GOV_SOURCES = [
   { name: 'JPCERT/CC 注意喚起',        url: 'https://www.jpcert.or.jp/rss/jpcert-all.rdf',                type: 'security' },
   { name: 'IPA 重要なセキュリティ情報', url: 'https://www.ipa.go.jp/security/alert-rss.rdf',              type: 'security' },
   { name: 'NISC 新着情報',             url: 'https://www.nisc.go.jp/rss/nisc_alert.rdf',                 type: 'security' },
-  { name: '警察庁 サイバー警察局',      url: 'https://www.npa.go.jp/newlyarrived/rss20.xml',              type: 'security' },
+  { name: '警察庁 サイバー警察局',      url: 'https://www.npa.go.jp/newlyarrived/rss20.xml',              type: 'dx' },
 
   // ── デジタル庁（DX政策の中核）
   { name: 'デジタル庁 新着情報',        url: 'https://www.digital.go.jp/rss/news.xml',                   type: 'ai_government' },
@@ -620,7 +620,11 @@ async function main() {
       summary: a.summary || a.description.slice(0, 150) || a.title,
       source_name: a.sourceName,
       source_url: sourceUrl,
-      pub_date: a.pubDate ? a.pubDate.slice(0, 10) : targetDate,
+      pub_date: (() => {
+        if (!a.pubDate) return targetDate;
+        const d = new Date(a.pubDate);
+        return isNaN(d.getTime()) ? targetDate : d.toISOString().slice(0, 10);
+      })(),
     };
   };
 
