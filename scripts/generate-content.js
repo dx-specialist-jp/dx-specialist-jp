@@ -180,7 +180,7 @@ function parseRSS(xml, sourceName) {
     const block = match[0];
     const title = stripHtml(extractTag(block, 'title'));
     const link = (extractTag(block, 'link') || extractTag(block, 'id')).replace(/\s/g, '');
-    const pubDate = extractTag(block, 'pubDate') || extractTag(block, 'published') || extractTag(block, 'updated');
+    const pubDate = extractTag(block, 'pubDate') || extractTag(block, 'published') || extractTag(block, 'updated') || extractTag(block, 'dc:date');
     const description = stripHtml(extractTag(block, 'description') || extractTag(block, 'summary') || extractTag(block, 'content'));
 
     if (!title || !link) continue;
@@ -385,7 +385,16 @@ PMO/PJMO業務に関連性の高い上位${maxCount}本を選定し、以下のJ
     return results.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, maxCount);
   } catch (err) {
     console.warn(`[WARN] ニュースフィルタエラー: ${err.message}`);
-    return [];
+    // フォールバック: Gemini失敗時は最新N件をそのまま返す
+    return articles.slice(0, maxCount).map((a) => ({
+      title: a.title,
+      summary: a.description || a.title,
+      relevance: '',
+      category: 'その他',
+      source: a.sourceName,
+      url: a.url,
+      score: 0,
+    }));
   }
 }
 
