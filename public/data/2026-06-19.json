@@ -4,44 +4,90 @@
   "security_alerts": [],
   "hero_article": {
     "section_name": "🔒 セキュリティ速報",
-    "title": "お知らせ：インシデント報告Webフォームメンテナンス（2026年6月26日）のお知らせ",
-    "summary": "お知らせ：インシデント報告Webフォームメンテナンス（2026年6月26日）のお知らせ",
-    "source_name": "JPCERT/CC 注意喚起",
-    "source_url": "https://www.jpcert.or.jp/maintenance20260615.html",
-    "pub_date": "2026-06-19"
+    "title": "令和７年における山岳遭難・水難の概況等について",
+    "summary": "令和７年における山岳遭難・水難の概況等について",
+    "source_name": "警察庁 サイバー警察局",
+    "source_url": "http://www.npa.go.jp/newlyarrived/2026/20260610001.html",
+    "pub_date": "Thu, 18 Ju"
   },
   "sub_articles": [
     {
       "section_name": "🔒 セキュリティ速報",
-      "title": "お知らせ：JPCERT/CC Eyes「ツール分析結果シートのアップデート」",
-      "summary": "お知らせ：JPCERT/CC Eyes「ツール分析結果シートのアップデート」",
-      "source_name": "JPCERT/CC 注意喚起",
-      "source_url": "https://blogs.jpcert.or.jp/ja/2026/06/tool_analysis_update.html",
-      "pub_date": "2026-06-19"
+      "title": "令和８年中の月別自殺者数について（５月末の暫定値）",
+      "summary": "令和８年中の月別自殺者数について（５月末の暫定値）",
+      "source_name": "警察庁 サイバー警察局",
+      "source_url": "http://www.npa.go.jp/newlyarrived/2026/20260610002.html",
+      "pub_date": "Wed, 17 Ju"
     },
     {
       "section_name": "🔒 セキュリティ速報",
-      "title": "お知らせ：JPCERT/CC Eyes「TSUBAMEレポート Overflow（2026年1～3月）」",
-      "summary": "お知らせ：JPCERT/CC Eyes「TSUBAMEレポート Overflow（2026年1～3月）」",
-      "source_name": "JPCERT/CC 注意喚起",
-      "source_url": "https://blogs.jpcert.or.jp/ja/2026/06/tsubame-overflow20260103.html",
-      "pub_date": "2026-06-19"
+      "title": "こども霞ヶ関見学デーのごあんない",
+      "summary": "こども霞ヶ関見学デーのごあんない",
+      "source_name": "警察庁 サイバー警察局",
+      "source_url": "http://www.npa.go.jp/newlyarrived/2026/20260612001.html",
+      "pub_date": "Tue, 16 Ju"
     },
     {
       "section_name": "🔒 セキュリティ速報",
-      "title": "お知らせ：JPCERT/CC インターネット定点観測レポート［2026年1月1日～2026年3月31日］",
-      "summary": "お知らせ：JPCERT/CC インターネット定点観測レポート［2026年1月1日～2026年3月31日］",
-      "source_name": "JPCERT/CC 注意喚起",
-      "source_url": "https://www.jpcert.or.jp/tsubame/report/report202601-03.html",
-      "pub_date": "2026-06-19"
+      "title": "交通事故統計月報（令和８年５月末）",
+      "summary": "交通事故統計月報（令和８年５月末）",
+      "source_name": "警察庁 サイバー警察局",
+      "source_url": "http://www.npa.go.jp/newlyarrived/2026/20260616001jiko0805.html",
+      "pub_date": "Tue, 16 Ju"
     }
   ],
-  "news_topics": [],
+  "news_topics": [
+    {
+      "title": "Anthropicへの500万ドル間接出資を解消、広告事業のイオレ 軸足移すAIデータセンター事業に資金投入",
+      "summary": "イオレは6月19日、3月に決めた米Anthropicへの間接出資を解消し、出資金500万ドル（約7億9355万円）全額の返還を受けると発表した。返還資金は自社で開発を進めるAIDCへの投資に充てる。",
+      "relevance": "",
+      "category": "その他",
+      "source": "ITmedia NEWS",
+      "url": "https://www.itmedia.co.jp/news/articles/2606/19/news138.html",
+      "score": 0
+    },
+    {
+      "title": "AIに頼ると技術が落ちる？ 医師・エンジニアたちの懸念、検証結果は……Natureも警鐘",
+      "summary": "AIツールが職場に普及するにつれて、専門家たちが長年培ってきたスキルが衰えてしまうのではないかという懸念が広がっている。",
+      "relevance": "",
+      "category": "その他",
+      "source": "ITmedia NEWS",
+      "url": "https://www.itmedia.co.jp/news/articles/2606/22/news041.html",
+      "score": 0
+    },
+    {
+      "title": "ノーベル化学賞のジョン・ジャンパー氏、Google DeepMindからAnthropicへ──「AlphaFold」開発の立役者",
+      "summary": "Google DeepMindで「AlphaFold」の開発を主導し、デミス・ハサビスCEOと共にノーベル化学賞を受賞したジョン・ジャンパー氏が、Anthropicに移ると自身のXで明らかにした。直近では「Gemini」を主導したGoogleのノーム・シャジーア氏がOpenAIに移っており、AI人材の獲得競争が一段と激しくなっている。",
+      "relevance": "",
+      "category": "その他",
+      "source": "ITmedia NEWS",
+      "url": "https://www.itmedia.co.jp/news/articles/2606/21/news017.html",
+      "score": 0
+    },
+    {
+      "title": "DAZN「980円問題」の本質 何に謝って、何に沈黙したのか 長期ユーザーのマンガ家が考察",
+      "summary": "DAZNのサッカー専用プランへの批判が続いています。同社は「月額プランと受け取れる記載」がされていた期間があったとして謝罪しましたが、実はどんな記載があったのかは明らかにしていません。",
+      "relevance": "",
+      "category": "その他",
+      "source": "ITmedia NEWS",
+      "url": "https://www.itmedia.co.jp/news/articles/2606/21/news015.html",
+      "score": 0
+    },
+    {
+      "title": "Anthropicへの500万ドル間接出資を解消、広告事業のイオレ 軸足移すAIデータセンター事業に資金投入",
+      "summary": "イオレは6月19日、3月に決めた米Anthropicへの間接出資を解消し、出資金500万ドル（約7億9355万円）全額の返還を受けると発表した。返還資金は自社で開発を進めるAIDCへの投資に充てる。",
+      "relevance": "",
+      "category": "その他",
+      "source": "ITmedia AI+",
+      "url": "https://www.itmedia.co.jp/news/articles/2606/19/news138.html",
+      "score": 0
+    }
+  ],
   "dx_tip": {
     "title": "政府IT調達の変化点：競争的対話方式・ア",
     "body": "政府IT調達の変化点：競争的対話方式・アジャイル型仕様書の実務について、PMO/PJMO視点から実務的な観点で整理します。詳細はデジタル庁の公開ガイドラインをご参照ください。",
     "reference": "デジタル庁「デジタル社会の実現に向けた重点計画」",
     "reference_url": "https://www.digital.go.jp/policies/priority-policy-program"
   },
-  "generated_at": "2026-06-21T16:31:43.367Z"
+  "generated_at": "2026-06-22T00:11:57.949Z"
 }
