@@ -2,78 +2,6 @@
   "tags": {
     "セキュリティ": [
       {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "交通事故統計月報（令和８年５月末）",
-        "summary": "交通事故統計月報（令和８年５月末）",
-        "source": "警察庁 サイバー警察局",
-        "url": "http://www.npa.go.jp/newlyarrived/2026/20260616001jiko0805.html",
-        "type": "government"
-      },
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "こども霞ヶ関見学デーのごあんない",
-        "summary": "こども霞ヶ関見学デーのごあんない",
-        "source": "警察庁 サイバー警察局",
-        "url": "http://www.npa.go.jp/newlyarrived/2026/20260612001.html",
-        "type": "government"
-      },
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "令和８年中の月別自殺者数について（５月末の暫定値）",
-        "summary": "令和８年中の月別自殺者数について（５月末の暫定値）",
-        "source": "警察庁 サイバー警察局",
-        "url": "http://www.npa.go.jp/newlyarrived/2026/20260610002.html",
-        "type": "government"
-      },
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "令和７年における山岳遭難・水難の概況等について",
-        "summary": "令和７年における山岳遭難・水難の概況等について",
-        "source": "警察庁 サイバー警察局",
-        "url": "http://www.npa.go.jp/newlyarrived/2026/20260610001.html",
-        "type": "government"
-      },
-      {
-        "date": "2026-06-22",
-        "date_ja": "2026年6月22日（月）",
-        "title": "お知らせ：JPCERT/CC インターネット定点観測レポート［2026年1月1日～2026年3月31日］",
-        "summary": "お知らせ：JPCERT/CC インターネット定点観測レポート［2026年1月1日～2026年3月31日］",
-        "source": "JPCERT/CC 注意喚起",
-        "url": "https://www.jpcert.or.jp/tsubame/report/report202601-03.html",
-        "type": "government"
-      },
-      {
-        "date": "2026-06-22",
-        "date_ja": "2026年6月22日（月）",
-        "title": "お知らせ：JPCERT/CC Eyes「TSUBAMEレポート Overflow（2026年1～3月）」",
-        "summary": "お知らせ：JPCERT/CC Eyes「TSUBAMEレポート Overflow（2026年1～3月）」",
-        "source": "JPCERT/CC 注意喚起",
-        "url": "https://blogs.jpcert.or.jp/ja/2026/06/tsubame-overflow20260103.html",
-        "type": "government"
-      },
-      {
-        "date": "2026-06-22",
-        "date_ja": "2026年6月22日（月）",
-        "title": "お知らせ：JPCERT/CC Eyes「ツール分析結果シートのアップデート」",
-        "summary": "お知らせ：JPCERT/CC Eyes「ツール分析結果シートのアップデート」",
-        "source": "JPCERT/CC 注意喚起",
-        "url": "https://blogs.jpcert.or.jp/ja/2026/06/tool_analysis_update.html",
-        "type": "government"
-      },
-      {
-        "date": "2026-06-22",
-        "date_ja": "2026年6月22日（月）",
-        "title": "お知らせ：インシデント報告Webフォームメンテナンス（2026年6月26日）のお知らせ",
-        "summary": "お知らせ：インシデント報告Webフォームメンテナンス（2026年6月26日）のお知らせ",
-        "source": "JPCERT/CC 注意喚起",
-        "url": "https://www.jpcert.or.jp/maintenance20260615.html",
-        "type": "government"
-      },
-      {
         "date": "2026-06-21",
         "date_ja": "2026年6月21日（日）",
         "title": "お知らせ：JPCERT/CC インターネット定点観測レポート［2026年1月1日～2026年3月31日］",
@@ -124,26 +52,6 @@
       {
         "date": "2026-06-19",
         "date_ja": "2026年6月19日（金）",
-        "title": "DAZN「980円問題」の本質 何に謝って、何に沈黙したのか 長期ユーザーのマンガ家が考察",
-        "summary": "DAZNのサッカー専用プランへの批判が続いています。同社は「月額プランと受け取れる記載」がされていた期間があったとして謝罪しましたが、実はどんな記載があったのかは明らかにしていません。",
-        "source": "ITmedia NEWS",
-        "url": "https://www.itmedia.co.jp/news/articles/2606/21/news015.html",
-        "relevance": "",
-        "type": "news"
-      },
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "ノーベル化学賞のジョン・ジャンパー氏、Google DeepMindからAnthropicへ──「AlphaFold」開発の立役者",
-        "summary": "Google DeepMindで「AlphaFold」の開発を主導し、デミス・ハサビスCEOと共にノーベル化学賞を受賞したジョン・ジャンパー氏が、Anthropicに移ると自身のXで明らかにした。直近では「Gemini」を主導したGoogleのノーム・シャジーア氏がOpenAIに移っており、AI人材の獲得競争が一段と激しくなっている。",
-        "source": "ITmedia NEWS",
-        "url": "https://www.itmedia.co.jp/news/articles/2606/21/news017.html",
-        "relevance": "",
-        "type": "news"
-      },
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
         "title": "AIに頼ると技術が落ちる？ 医師・エンジニアたちの懸念、検証結果は……Natureも警鐘",
         "summary": "AIツールが職場に普及するにつれて、専門家たちが長年培ってきたスキルが衰えてしまうのではないかという懸念が広がっている。",
         "source": "ITmedia NEWS",
@@ -154,18 +62,18 @@
       {
         "date": "2026-06-19",
         "date_ja": "2026年6月19日（金）",
-        "title": "Anthropicへの500万ドル間接出資を解消、広告事業のイオレ 軸足移すAIデータセンター事業に資金投入",
-        "summary": "イオレは6月19日、3月に決めた米Anthropicへの間接出資を解消し、出資金500万ドル（約7億9355万円）全額の返還を受けると発表した。返還資金は自社で開発を進めるAIDCへの投資に充てる。",
+        "title": "ノーベル化学賞のジョン・ジャンパー氏、Google DeepMindからAnthropicへ──「AlphaFold」開発の立役者",
+        "summary": "Google DeepMindで「AlphaFold」の開発を主導し、デミス・ハサビスCEOと共にノーベル化学賞を受賞したジョン・ジャンパー氏が、Anthropicに移ると自身のXで明らかにした。",
         "source": "ITmedia NEWS",
-        "url": "https://www.itmedia.co.jp/news/articles/2606/19/news138.html",
+        "url": "https://www.itmedia.co.jp/news/articles/2606/21/news017.html",
         "relevance": "",
         "type": "news"
       }
     ]
   },
   "tag_counts": {
-    "セキュリティ": 12,
-    "その他": 5
+    "セキュリティ": 4,
+    "その他": 3
   },
   "updated_at": "2026-06-22T00:11:57.951Z"
 }

@@ -188,10 +188,10 @@ function parseRSS(xml, sourceName) {
     // ペイウォードチェック
     if (PAYWALL_KEYWORDS.some((kw) => title.includes(kw) || description.includes(kw))) continue;
 
-    // 24時間以内チェック
+    // 36時間以内チェック（前日の業務時間帯記事もカバー）
     if (pubDate) {
       const age = Date.now() - new Date(pubDate).getTime();
-      if (age > 26 * 60 * 60 * 1000) continue;
+      if (age > 36 * 60 * 60 * 1000) continue;
     }
 
     items.push({ title, url: link, description: description.slice(0, 400), pubDate, sourceName });
@@ -234,8 +234,24 @@ async function callGemini(model, prompt) {
   const { GoogleGenerativeAI } = await import('@google/generative-ai');
   const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const m = genai.getGenerativeModel({ model });
-  const result = await m.generateContent(prompt);
-  return result.response.text().trim();
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const result = await m.generateContent(prompt);
+      return result.response.text().trim();
+    } catch (err) {
+      const msg = String(err.message);
+      // 「current quota」はRPD日次上限 → リトライ不可。それ以外の429はRPM → 待機してリトライ
+      const isRpmLimit = msg.includes('429') && !msg.includes('current quota');
+      if (isRpmLimit && attempt < 2) {
+        const wait = (attempt + 1) * 30000;
+        console.warn(`[WARN] Gemini RPMリミット - ${wait / 1000}秒後にリトライ (${attempt + 1}/2)`);
+        await new Promise((r) => setTimeout(r, wait));
+      } else {
+        throw err;
+      }
+    }
+  }
 }
 
 function parseJsonFromText(text) {
@@ -543,7 +559,14 @@ async function main() {
     newsArticlesRaw.push(...items);
     console.log(`[INFO]   ${src.name}: ${items.length}件`);
   }
-  console.log(`[INFO] ニュース記事合計: ${newsArticlesRaw.length}件`);
+  // URL重複排除（複数フィードで同じ記事が出る場合）
+  const seenUrls = new Set();
+  const newsDeduped = newsArticlesRaw.filter((a) => {
+    if (!a.url || seenUrls.has(a.url)) return false;
+    seenUrls.add(a.url);
+    return true;
+  });
+  console.log(`[INFO] ニュース記事合計: ${newsArticlesRaw.length}件 → 重複排除後: ${newsDeduped.length}件`);
 
   // ② b. X (Twitter) アカウントを巡回（RSSHub経由）
   const rsshubBase = process.env.RSSHUB_BASE_URL;
@@ -576,7 +599,7 @@ async function main() {
 
       // ④ ニュースをフィルタリング・要約
       console.log('[INFO] ニュース記事をフィルタリング中...');
-      newsTopics = await filterAndSummarizeNews(newsArticlesRaw, model, 5);
+      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 5);
 
       // ⑤ DX Tips 生成
       console.log('[INFO] DX Tips を生成中...');
@@ -599,6 +622,15 @@ async function main() {
       summary: a.description.slice(0, 150) || a.title,
       importance_score: a.articleType === 'security' ? 4 : 2,
       is_security_alert: a.articleType === 'security',
+    }));
+    newsTopics = newsDeduped.slice(0, 5).map((a) => ({
+      title: a.title,
+      summary: a.description || a.title,
+      relevance: '',
+      category: 'その他',
+      source: a.sourceName,
+      url: a.url,
+      score: 0,
     }));
   }
 
