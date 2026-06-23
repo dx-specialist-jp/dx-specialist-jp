@@ -37,43 +37,10 @@
         "url": "https://www.jpcert.or.jp/maintenance20260615.html",
         "type": "government"
       }
-    ],
-    "その他": [
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "Anthropicへの500万ドル間接出資を解消、広告事業のイオレ 軸足移すAIデータセンター事業に資金投入",
-        "summary": "イオレは6月19日、3月に決めた米Anthropicへの間接出資を解消し、出資金500万ドル（約7億9355万円）全額の返還を受けると発表した。返還資金は自社で開発を進めるAIDCへの投資に充てる。",
-        "source": "ITmedia AI+",
-        "url": "https://www.itmedia.co.jp/news/articles/2606/19/news138.html",
-        "relevance": "",
-        "type": "news"
-      },
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "AIに頼ると技術が落ちる？ 医師・エンジニアたちの懸念、検証結果は……Natureも警鐘",
-        "summary": "AIツールが職場に普及するにつれて、専門家たちが長年培ってきたスキルが衰えてしまうのではないかという懸念が広がっている。",
-        "source": "ITmedia NEWS",
-        "url": "https://www.itmedia.co.jp/news/articles/2606/22/news041.html",
-        "relevance": "",
-        "type": "news"
-      },
-      {
-        "date": "2026-06-19",
-        "date_ja": "2026年6月19日（金）",
-        "title": "ノーベル化学賞のジョン・ジャンパー氏、Google DeepMindからAnthropicへ──「AlphaFold」開発の立役者",
-        "summary": "Google DeepMindで「AlphaFold」の開発を主導し、デミス・ハサビスCEOと共にノーベル化学賞を受賞したジョン・ジャンパー氏が、Anthropicに移ると自身のXで明らかにした。",
-        "source": "ITmedia NEWS",
-        "url": "https://www.itmedia.co.jp/news/articles/2606/21/news017.html",
-        "relevance": "",
-        "type": "news"
-      }
     ]
   },
   "tag_counts": {
-    "セキュリティ": 4,
-    "その他": 3
+    "セキュリティ": 4
   },
-  "updated_at": "2026-06-22T00:11:57.951Z"
+  "updated_at": "2026-06-23T00:00:00.000Z"
 }

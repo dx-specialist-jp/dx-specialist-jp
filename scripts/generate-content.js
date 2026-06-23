@@ -26,7 +26,6 @@ const GOV_SOURCES = [
   { name: 'JPCERT/CC 注意喚起',        url: 'https://www.jpcert.or.jp/rss/jpcert-all.rdf',                type: 'security' },
   { name: 'IPA 重要なセキュリティ情報', url: 'https://www.ipa.go.jp/security/alert-rss.rdf',              type: 'security' },
   { name: 'NISC 新着情報',             url: 'https://www.nisc.go.jp/rss/nisc_alert.rdf',                 type: 'security' },
-  { name: '警察庁 サイバー警察局',      url: 'https://www.npa.go.jp/newlyarrived/rss20.xml',              type: 'dx' },
 
   // ── デジタル庁（DX政策の中核）
   { name: 'デジタル庁 新着情報',        url: 'https://www.digital.go.jp/rss/news.xml',                   type: 'ai_government' },
@@ -293,10 +292,14 @@ async function summarizeGovArticles(articles, model) {
 
 【重要度判定（importance_score: 整数1〜5）】
 5: 即時対応必須（CVE・CVSS9以上の脆弱性、施行間近のガイドライン改定、政府緊急指示）
-4: 今月中に確認が必要（新ガイドライン公開、政府AI戦略・源内関連の重要決定、調達制度変更）
-3: 四半期以内に把握が望ましい（行政DX動向、制度変更予告、自治体先進事例）
-2: 参考情報（AI業界トレンド、海外事例、技術動向）
-1: 間接的に関連する情報
+4: 今月中に確認が必要（新ガイドライン公開、政府AI戦略・源内関連の重要決定、調達制度変更、ガバメントクラウド移行関連）
+3: 四半期以内に把握が望ましい（行政DX動向、デジタル庁・各省庁のAI導入事例、制度変更予告、自治体先進事例）
+2: 参考情報（行政に波及しうるAI業界トレンド、海外行政DX事例、技術動向）
+1: PMO/PJMO業務に直接関係しない情報（統計発表、一般的なお知らせ、山岳遭難・交通事故等の行政DXと無関係な広報）
+
+【採用・除外基準】
+採用優先: デジタル庁施策・ガバメントクラウド・源内・マイナンバー・行政AI・DX計画に関する情報
+除外（score 1）: 交通事故統計、山岳遭難、自殺統計、こども向け広報イベント等、PMO/PJMO業務に無関係な行政広報
 
 【セキュリティ速報判定（is_security_alert: true/false）】
 trueとする条件: CVE番号付きの脆弱性情報、IPA・JPCERT・NISCの緊急注意喚起、政府システムへの直接的な脅威
@@ -599,7 +602,7 @@ async function main() {
 
       // ④ ニュースをフィルタリング・要約
       console.log('[INFO] ニュース記事をフィルタリング中...');
-      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 5);
+      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 8);
 
       // ⑤ DX Tips 生成
       console.log('[INFO] DX Tips を生成中...');
@@ -623,7 +626,7 @@ async function main() {
       importance_score: a.articleType === 'security' ? 4 : 2,
       is_security_alert: a.articleType === 'security',
     }));
-    newsTopics = newsDeduped.slice(0, 5).map((a) => ({
+    newsTopics = newsDeduped.slice(0, 8).map((a) => ({
       title: a.title,
       summary: a.description || a.title,
       relevance: '',
@@ -639,9 +642,16 @@ async function main() {
     .filter((a) => a.is_security_alert && a.importance_score >= 4)
     .map((a) => ({ title: a.title, url: a.url, source: a.sourceName }));
 
-  const nonSecurity = summarizedGov
+  // ソース多様性確保: 重要度順で並べた後、同一ソースは最大2件に制限
+  const allNonSecurity = summarizedGov
     .filter((a) => !a.is_security_alert)
     .sort((a, b) => b.importance_score - a.importance_score);
+  const sourceCount = {};
+  const nonSecurity = allNonSecurity.filter((a) => {
+    const key = a.sourceName;
+    sourceCount[key] = (sourceCount[key] || 0) + 1;
+    return sourceCount[key] <= 2;
+  });
 
   const buildArticleContext = (a) => {
     const sourceUrl = isValidUrl(a.url) ? a.url : '';
@@ -676,7 +686,7 @@ async function main() {
   }
 
   const heroArticle = nonSecurity[0] ? buildArticleContext(nonSecurity[0]) : null;
-  const subArticles = nonSecurity.slice(1, 4).map(buildArticleContext);
+  const subArticles = nonSecurity.slice(1, 6).map(buildArticleContext);
 
   // ⑦ JSON 保存
   const dayData = {
