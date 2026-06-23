@@ -602,7 +602,7 @@ async function main() {
 
       // ④ ニュースをフィルタリング・要約
       console.log('[INFO] ニュース記事をフィルタリング中...');
-      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 8);
+      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 24);
 
       // ⑤ DX Tips 生成
       console.log('[INFO] DX Tips を生成中...');
@@ -626,7 +626,7 @@ async function main() {
       importance_score: a.articleType === 'security' ? 4 : 2,
       is_security_alert: a.articleType === 'security',
     }));
-    newsTopics = newsDeduped.slice(0, 8).map((a) => ({
+    newsTopics = newsDeduped.slice(0, 24).map((a) => ({
       title: a.title,
       summary: a.description || a.title,
       relevance: '',
@@ -650,7 +650,7 @@ async function main() {
   const nonSecurity = allNonSecurity.filter((a) => {
     const key = a.sourceName;
     sourceCount[key] = (sourceCount[key] || 0) + 1;
-    return sourceCount[key] <= 2;
+    return sourceCount[key] <= 6;
   });
 
   const buildArticleContext = (a) => {
@@ -686,7 +686,7 @@ async function main() {
   }
 
   const heroArticle = nonSecurity[0] ? buildArticleContext(nonSecurity[0]) : null;
-  const subArticles = nonSecurity.slice(1, 6).map(buildArticleContext);
+  const subArticles = nonSecurity.slice(1, 16).map(buildArticleContext);
 
   // ⑦ JSON 保存
   const dayData = {
