@@ -2,6 +2,36 @@
   "tags": {
     "セキュリティ": [
       {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "Weekly Report: crypton-x509-validationに不適切な証明書検証の脆弱性",
+        "summary": "crypton-x509-validationには、不適切な証明書検証の脆弱性があります。この問題は、当該製品を修正済みのバージョンに更新することで解決します。詳細は、CERT/CCが提供する情報を参照してください。",
+        "source": "JPCERT/CC 注意喚起",
+        "url": "https://www.jpcert.or.jp/wr/2026/wr260624.html#2",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "Weekly Report: Microsoft Edgeに複数の脆弱性",
+        "summary": "Microsoft Edgeには、複数の脆弱性があります。この問題は、当該製品を修正済みのバージョンに更新することで解決します。詳細は、開発者が提供する情報を参照してください。",
+        "source": "JPCERT/CC 注意喚起",
+        "url": "https://www.jpcert.or.jp/wr/2026/wr260624.html#1",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "お知らせ：役員体制の一部変更について",
+        "summary": "お知らせ：役員体制の一部変更について",
+        "source": "JPCERT/CC 注意喚起",
+        "url": "https://www.jpcert.or.jp/profile.html",
+        "relevance": "",
+        "type": "news"
+      },
+      {
         "date": "2026-06-24",
         "date_ja": "2026年6月24日（水）",
         "title": "Weekly Report: Node.jsに複数の脆弱性",
@@ -114,6 +144,106 @@
       }
     ],
     "その他": [
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "メモを書いて待つだけでAIが商品探し！Yahoo!ショッピングで始まった超便利な「お買い物メモ ...",
+        "summary": "見解として、曖昧なメモや写真からAIが意図を汲み取り、購買までワンストップでエスコートする仕組みは、検索の手間を消滅させる次世代のコマースAIガバナンス ...",
+        "source": "Google Alert: AIガバナンス",
+        "url": "https://dxmagazine.jp/news/trytoda2626-21/",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "すでに始まっているAI攻撃、参照すべきセキュリティリスク指針と有効な対抗策",
+        "summary": "OWASP Top 10に基づくLLMやAPIを狙う攻撃手法、ボット対策やAPI保護の考え方に加え、各国で進むAIガバナンス動向も整理。そのうえでAPIセキュリティとAI規制要件 ...",
+        "source": "Google Alert: AIガバナンス",
+        "url": "https://active.nikkeibp.co.jp/atcl/wp/b/26/06/18/06306/?i_cid=nbpnxta_sied_newarticles",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "AIとデータ保護の最前線、世界3千人調査が示すセキュリティ脅威の実態と対策",
+        "summary": "生成AIをはじめとした各種AIを業務に活用する企業が珍しくなくなった今 ... 人事担当者の実態調査から分かった「AI導入のコツ」、鍵はAIガバナンスにあり ...",
+        "source": "Google Alert: AIガバナンス",
+        "url": "https://active.nikkeibp.co.jp/atcl/wp/b/26/06/18/06307/?i_cid=nbpnxta_sied_newarticles",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "クロードは公式の身分証明書を要求でき、ユーザーも顔写真を求められる - VOI.id",
+        "summary": "Anthropicは、ユーザーにClaudeに政府の公式文書をアップロードして年齢と身元を確認するよう依頼できます。このルールは、同社の最新のプライバシー ...",
+        "source": "Google Alert: AI×行政",
+        "url": "https://voi.id/ja/amp/581285",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "AnthropicがSlackでエージェントClaude Tagの導入を開始、企業向けAI競争を加速",
+        "summary": "2026年6月23日、アントロピックは Salesforce の Slack アプリ内で自社のAIエージェント「クロード・タグ」を正式公開した。新しいツールは業務ワークフロー ...",
+        "source": "Google Alert: AI×行政",
+        "url": "https://mezha.net/jp/bukvy/b3dded80_anthropic_launches_claude/",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "AI利用に身分証提出を義務化——OpenAIとAnthropicが本人確認を全面導入",
+        "summary": "AnthropicとOpenAIなど主要AI企業が、利用者に政府発行の身分証明書の提出を求め始めた。表向きは未成年者保護と不正アカウントの遮断が目的だが、AIが国家 ...",
+        "source": "Google Alert: AI×行政",
+        "url": "https://finance.biggo.jp/news/8a80ee69-32df-4aa8-93c9-a7c443389505",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "トランプがAI規制に転換？強まる「安全保障」ファクター、今後を見据える４つの焦点（Wedge）",
+        "summary": "米国東部時間2026年６月12日17時21分、生成AI「Claude（クロード）」を展開するAnthropic（アンソロピック）は米政府からの書簡を受け取った。書簡は ...",
+        "source": "Google Alert: AI×行政",
+        "url": "https://topics.smt.docomo.ne.jp/article/wedge/world/wedge_40768",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "Geminiで校務効率化、全国3都市で無料セミナー…ミカサ商事 | 教育業界ニュース「ReseEd ...",
+        "summary": "対象は自治体・教育関係者限定。 「先生の課題を今すぐ解決！Geminiで校務＆授業大改革セミナー」は、教育機関向けにGoogle for Educationの ...",
+        "source": "Google Alert: AI×行政",
+        "url": "https://reseed.resemom.jp/article/2026/06/24/13528.html",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "政府や企業に壊滅的なサイバー攻撃をもたらすAIモデルが「数カ月以内」に登場する恐れ",
+        "summary": "サイバー攻撃で工場が止まる、顧客情報が流出する、行政サービスが ... アメリカ政府がAnthropicの「Claude Mythos」の規制命令を下すもAnthropicが ...",
+        "source": "Google Alert: AI×行政",
+        "url": "https://gigazine.net/news/20260623-ai-shift-cyber-risk/",
+        "relevance": "",
+        "type": "news"
+      },
+      {
+        "date": "2026-06-25",
+        "date_ja": "2026年6月25日（木）",
+        "title": "Claudeで障害発生＝政府向けサービスは稼働継続",
+        "summary": "claude.ai、API、Claude Code、Console、Coworkでエラーの発生率が上昇している。 Claude for Governmentは過去90日間の稼働率が99.93％で最も高い。",
+        "source": "Google Alert: AI×行政",
+        "url": "https://jp.beincrypto.com/claude-outage-government-tier-stays-online/",
+        "relevance": "",
+        "type": "news"
+      },
       {
         "date": "2026-06-24",
         "date_ja": "2026年6月24日（水）",
@@ -944,10 +1074,10 @@
     ]
   },
   "tag_counts": {
-    "セキュリティ": 12,
-    "その他": 58,
+    "セキュリティ": 15,
+    "その他": 68,
     "行政AI": 13,
     "行政DX": 14
   },
-  "updated_at": "2026-06-24T03:50:03.916Z"
+  "updated_at": "2026-06-24T20:22:59.655Z"
 }
