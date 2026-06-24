@@ -27,15 +27,8 @@ const GOV_SOURCES = [
   { name: 'IPA 重要なセキュリティ情報', url: 'https://www.ipa.go.jp/security/alert-rss.rdf',              type: 'security' },
   { name: 'NISC 新着情報',             url: 'https://www.nisc.go.jp/rss/nisc_alert.rdf',                 type: 'security' },
 
-  // ── デジタル庁（DX政策の中核）
-  { name: 'デジタル庁 新着情報',        url: 'https://www.digital.go.jp/rss/news.xml',                   type: 'ai_government' },
+  // ── デジタル庁
   { name: 'デジタル庁 note',            url: 'https://digital-gov.note.jp/rss',                           type: 'ai_government' },
-
-  // ── 各省庁 DX・AI関連
-  { name: '経済産業省 新着情報',        url: 'https://www.meti.go.jp/press/rss.rdf',                     type: 'dx' },
-  { name: '内閣府 新着情報',            url: 'https://www.cao.go.jp/rss/news.rdf',                       type: 'dx' },
-  { name: '厚生労働省 新着情報',        url: 'https://www.mhlw.go.jp/stf/news.rdf',                      type: 'dx' },
-  { name: '金融庁 新着情報',            url: 'https://www.fsa.go.jp/fsaNewsListAll_rss2.xml',             type: 'dx' },
 ];
 
 // ── Google Alerts RSS ────────────────────────────────────────────────

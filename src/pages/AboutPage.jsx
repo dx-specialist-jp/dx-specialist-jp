@@ -148,11 +148,10 @@ export default function AboutPage() {
           <section className="about-section" aria-labelledby="sources-heading">
             <h2 className="about-section-title" id="sources-heading">収集対象の情報源</h2>
 
-            <p><strong>政府・公的機関 RSS（9ソース）</strong></p>
+            <p><strong>政府・公的機関 RSS（4ソース）</strong></p>
             <ul>
               <li><strong>セキュリティ:</strong> JPCERT/CC・IPA（情報処理推進機構）・NISC（内閣サイバーセキュリティセンター）</li>
-              <li><strong>デジタル庁:</strong> 新着情報・note</li>
-              <li><strong>各省庁:</strong> 経済産業省・内閣府・厚生労働省・金融庁</li>
+              <li><strong>デジタル庁:</strong> note</li>
             </ul>
 
             <p style={{ marginTop: '14px' }}><strong>Google Alerts RSS（8キーワード）</strong></p>
