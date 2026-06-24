@@ -622,7 +622,7 @@ async function main() {
   // セキュリティ速報
   const securityAlerts = summarizedGov
     .filter((a) => a.is_security_alert && a.importance_score >= 4)
-    .map((a) => ({ title: a.title, url: a.url, source: a.sourceName }));
+    .map((a) => ({ title: a.title, url: isValidUrl(a.url) ? a.url : '', source: a.sourceName }));
 
   // 非セキュリティ記事: スコア降順、同スコア内はテーマ順（行政AI → 行政DX）
   const GOV_TYPE_ORDER = ['ai_government', 'dx'];

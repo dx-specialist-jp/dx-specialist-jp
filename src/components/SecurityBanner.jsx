@@ -15,7 +15,7 @@ export default function SecurityBanner({ alerts }) {
           <span className="security-banner-label">セキュリティ速報</span>
           <div>
             <span className="security-banner-title">{alert.title}</span>
-            {alert.url && (
+            {alert.url && alert.url.startsWith('http') && (
               <a
                 href={alert.url}
                 className="security-banner-link"
