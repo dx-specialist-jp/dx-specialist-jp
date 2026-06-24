@@ -39,21 +39,20 @@ const GOV_SOURCES = [
   { name: '金融庁 新着情報',            url: 'https://www.fsa.go.jp/fsaNewsListAll_rss2.xml',             type: 'dx' },
 ];
 
-// ── 無料ニュース RSS ソース ───────────────────────────────────────────
-// PMO/PJMO視点で行政DX・AI・セキュリティに絞った無料媒体
-const NEWS_SOURCES = [
-  // ITmedia系（網羅性高い、無料）
-  { name: 'ITmedia NEWS',            url: 'https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml',              paywall: false },
-  { name: 'ITmedia AI+',             url: 'https://rss.itmedia.co.jp/rss/2.0/aiplus.xml',                   paywall: false },
-  { name: 'ITmedia エンタープライズ', url: 'https://rss.itmedia.co.jp/rss/2.0/enterprise.xml',               paywall: false },
-  { name: '@IT',                     url: 'https://rss.itmedia.co.jp/rss/2.0/ait.xml',                      paywall: false },
-
-  // インプレス系（クラウド・IT業界）
-  { name: 'Internet Watch',          url: 'https://internet.watch.impress.co.jp/data/rss/1.0/iw/feed.rdf',  paywall: false },
-  { name: 'クラウド Watch',           url: 'https://cloud.watch.impress.co.jp/data/rss/1.0/clw/feed.rdf',   paywall: false },
-
-  // 公共放送（政策・社会的文脈）
-  { name: 'NHKニュース 科学・IT',     url: 'https://www.nhk.or.jp/rss/news/cat3.xml',                        paywall: false },
+// ── Google Alerts RSS ────────────────────────────────────────────────
+// Google アラートの RSS フィード URL を設定する。
+// 設定方法: Google アラート画面で「その他のオプション」→「配信先」を「RSSフィード」に変更し
+//           表示された URL を以下に追記する。
+//   URL 形式: https://www.google.com/alerts/feeds/<account_id>/<alert_id>
+// 環境変数 GOOGLE_ALERT_RSS_<n> で外部から注入することも可能。
+const GOOGLE_ALERT_SOURCES = [
+  // 例: { name: '行政DX Google Alert', url: 'https://www.google.com/alerts/feeds/XXXXX/YYYYY' },
+  // 環境変数から動的に読み込む（GOOGLE_ALERT_RSS_1, GOOGLE_ALERT_RSS_2, ... が設定されていれば追加）
+  ...Array.from({ length: 10 }, (_, i) => {
+    const url = process.env[`GOOGLE_ALERT_RSS_${i + 1}`];
+    const name = process.env[`GOOGLE_ALERT_NAME_${i + 1}`] || `Google Alert ${i + 1}`;
+    return url ? { name, url } : null;
+  }).filter(Boolean),
 ];
 
 // ── DX Tips テーマ一覧 ───────────────────────────────────────────────
@@ -293,13 +292,22 @@ async function summarizeGovArticles(articles, model) {
 【重要度判定（importance_score: 整数1〜5）】
 5: 即時対応必須（CVE・CVSS9以上の脆弱性、施行間近のガイドライン改定、政府緊急指示）
 4: 今月中に確認が必要（新ガイドライン公開、政府AI戦略・源内関連の重要決定、調達制度変更、ガバメントクラウド移行関連）
-3: 四半期以内に把握が望ましい（行政DX動向、デジタル庁・各省庁のAI導入事例、制度変更予告、自治体先進事例）
-2: 参考情報（行政に波及しうるAI業界トレンド、海外行政DX事例、技術動向）
-1: PMO/PJMO業務に直接関係しない情報（統計発表、一般的なお知らせ、山岳遭難・交通事故等の行政DXと無関係な広報）
+3: 四半期以内に把握が望ましい（行政DX動向、デジタル庁・各省庁のAI導入事例、制度変更予告、自治体先進事例、政策方針の発表）
+2: 参考情報（行政に波及しうるAI業界トレンド、海外行政DX事例、技術動向、審議会・委員会の実質的な審議内容）
+1: PMO/PJMO業務に直接関係しない情報（必ずスコア1とする）
 
-【採用・除外基準】
-採用優先: デジタル庁施策・ガバメントクラウド・源内・マイナンバー・行政AI・DX計画に関する情報
-除外（score 1）: 交通事故統計、山岳遭難、自殺統計、こども向け広報イベント等、PMO/PJMO業務に無関係な行政広報
+【スコア1（必須）の記事パターン ― 下記に該当するものは内容を問わず1とする】
+- 開催案内・開催のご案内（審議会・委員会・研究会・ワーキンググループの日程告知のみ）
+- 議事録・配布資料の掲載お知らせ（内容ではなく「掲載した」という連絡のみ）
+- 更新連絡（既存ページ・既存資料の更新を知らせるだけの記事）
+- 入札・一般競争入札・企画競争の公告（政策内容を含まない調達公告）
+- 大臣・長官の記者会見動画・要旨の掲載通知（会見内容を含まず「掲載した」旨だけのもの）
+- 人事・採用・官庁訪問情報
+- こども向け広報・一般市民向け見学・イベント案内
+- 交通事故統計、山岳遭難、自殺統計等の行政DXと無関係な広報
+
+【採用優先】
+デジタル庁施策・ガバメントクラウド・源内・マイナンバー・行政AI・DX計画に関する情報
 
 【セキュリティ速報判定（is_security_alert: true/false）】
 trueとする条件: CVE番号付きの脆弱性情報、IPA・JPCERT・NISCの緊急注意喚起、政府システムへの直接的な脅威
@@ -554,22 +562,26 @@ async function main() {
   }
   console.log(`[INFO] 政府記事合計: ${govArticlesRaw.length}件`);
 
-  // ② 無料ニュースを収集
-  console.log('[INFO] ニュースRSSを収集中...');
+  // ② Google Alerts RSS を収集
   const newsArticlesRaw = [];
-  for (const src of NEWS_SOURCES) {
-    const items = await fetchFeed(src.url, src.name);
-    newsArticlesRaw.push(...items);
-    console.log(`[INFO]   ${src.name}: ${items.length}件`);
+  if (GOOGLE_ALERT_SOURCES.length > 0) {
+    console.log('[INFO] Google Alerts RSSを収集中...');
+    for (const src of GOOGLE_ALERT_SOURCES) {
+      const items = await fetchFeed(src.url, src.name);
+      newsArticlesRaw.push(...items);
+      console.log(`[INFO]   ${src.name}: ${items.length}件`);
+    }
+  } else {
+    console.log('[INFO] Google Alerts RSS 未設定 → ニューストピックはスキップ');
   }
-  // URL重複排除（複数フィードで同じ記事が出る場合）
+  // URL重複排除
   const seenUrls = new Set();
   const newsDeduped = newsArticlesRaw.filter((a) => {
     if (!a.url || seenUrls.has(a.url)) return false;
     seenUrls.add(a.url);
     return true;
   });
-  console.log(`[INFO] ニュース記事合計: ${newsArticlesRaw.length}件 → 重複排除後: ${newsDeduped.length}件`);
+  console.log(`[INFO] Google Alerts 記事合計: ${newsArticlesRaw.length}件 → 重複排除後: ${newsDeduped.length}件`);
 
   // ② b. X (Twitter) アカウントを巡回（RSSHub経由）
   const rsshubBase = process.env.RSSHUB_BASE_URL;
@@ -602,7 +614,7 @@ async function main() {
 
       // ④ ニュースをフィルタリング・要約
       console.log('[INFO] ニュース記事をフィルタリング中...');
-      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 24);
+      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 10);
 
       // ⑤ DX Tips 生成
       console.log('[INFO] DX Tips を生成中...');
@@ -614,7 +626,7 @@ async function main() {
       summarizedGov = govArticlesRaw.map((a) => ({
         ...a,
         summary: a.description.slice(0, 150) || a.title,
-        importance_score: a.articleType === 'security' ? 4 : 2,
+        importance_score: a.articleType === 'security' ? 4 : a.articleType === 'ai_government' ? 3 : 2,
         is_security_alert: a.articleType === 'security',
       }));
     }
@@ -623,10 +635,10 @@ async function main() {
     summarizedGov = govArticlesRaw.map((a) => ({
       ...a,
       summary: a.description.slice(0, 150) || a.title,
-      importance_score: a.articleType === 'security' ? 4 : 2,
+      importance_score: a.articleType === 'security' ? 4 : a.articleType === 'ai_government' ? 3 : 2,
       is_security_alert: a.articleType === 'security',
     }));
-    newsTopics = newsDeduped.slice(0, 24).map((a) => ({
+    newsTopics = newsDeduped.slice(0, 10).map((a) => ({
       title: a.title,
       summary: a.description || a.title,
       relevance: '',
@@ -638,19 +650,30 @@ async function main() {
   }
 
   // ⑥ 記事を選定
+
+  // セキュリティ速報
   const securityAlerts = summarizedGov
     .filter((a) => a.is_security_alert && a.importance_score >= 4)
     .map((a) => ({ title: a.title, url: a.url, source: a.sourceName }));
 
-  // ソース多様性確保: 重要度順で並べた後、同一ソースは最大2件に制限
+  // 非セキュリティ記事: スコア降順、同スコア内はテーマ順（行政AI → 行政DX）
+  const GOV_TYPE_ORDER = ['ai_government', 'dx'];
   const allNonSecurity = summarizedGov
     .filter((a) => !a.is_security_alert)
-    .sort((a, b) => b.importance_score - a.importance_score);
+    .sort((a, b) => {
+      const scoreDiff = b.importance_score - a.importance_score;
+      if (scoreDiff !== 0) return scoreDiff;
+      const ai = GOV_TYPE_ORDER.indexOf(a.articleType);
+      const bi = GOV_TYPE_ORDER.indexOf(b.articleType);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+
+  // 同一ソースから最大3件に制限
   const sourceCount = {};
   const nonSecurity = allNonSecurity.filter((a) => {
     const key = a.sourceName;
     sourceCount[key] = (sourceCount[key] || 0) + 1;
-    return sourceCount[key] <= 6;
+    return sourceCount[key] <= 3;
   });
 
   const buildArticleContext = (a) => {
@@ -670,6 +693,32 @@ async function main() {
     };
   };
 
+  // 注目記事: importance_score >= 3 のみ（開催案内・更新連絡等は除外）
+  const highPriorityGov = nonSecurity.filter((a) => a.importance_score >= 3);
+  // 参考情報（score 2）→ ニューストピックへ移動
+  const midPriorityGov  = nonSecurity.filter((a) => a.importance_score === 2);
+
+  const heroArticle = highPriorityGov[0] ? buildArticleContext(highPriorityGov[0]) : null;
+  const subArticles = highPriorityGov.slice(1, 16).map(buildArticleContext);
+
+  // score 2 の政府記事をニューストピック形式に変換して追加
+  const ARTICLE_TYPE_TO_CATEGORY = {
+    security:      'セキュリティ',
+    ai_government: '行政AI',
+    dx:            '行政DX',
+  };
+  const govMidAsNews = midPriorityGov
+    .filter((a) => isValidUrl(a.url))
+    .map((a) => ({
+      title:     a.title,
+      summary:   a.summary || a.description?.slice(0, 100) || a.title,
+      relevance: '',
+      category:  ARTICLE_TYPE_TO_CATEGORY[a.articleType] || '行政DX',
+      source:    a.sourceName,
+      url:       a.url,
+      score:     a.importance_score,
+    }));
+
   // newsTopics の URL バリデーション
   newsTopics = newsTopics.map((t) => {
     if (!isValidUrl(t.url)) {
@@ -679,14 +728,25 @@ async function main() {
     return t;
   });
 
+  // gov 参考情報を追加してテーマ順に並べ直す
+  const NEWS_CATEGORY_ORDER = [
+    'セキュリティ', '行政AI', '行政DX',
+    'AI活用', 'クラウド/インフラ', '制度/ガイドライン',
+    '自治体DX事例', '調達・契約', '働き方/業務改革', 'その他',
+  ];
+  newsTopics = [...newsTopics, ...govMidAsNews].sort((a, b) => {
+    const ai = NEWS_CATEGORY_ORDER.indexOf(a.category);
+    const bi = NEWS_CATEGORY_ORDER.indexOf(b.category);
+    const catDiff = (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    if (catDiff !== 0) return catDiff;
+    return (b.score || 0) - (a.score || 0);
+  });
+
   // DX Tips の reference_url バリデーション
   if (dxTip && !isValidUrl(dxTip.reference_url)) {
     console.warn(`[WARN] DX Tips参照URL無効: "${dxTip.reference_url}" → クリア`);
     dxTip = { ...dxTip, reference_url: '' };
   }
-
-  const heroArticle = nonSecurity[0] ? buildArticleContext(nonSecurity[0]) : null;
-  const subArticles = nonSecurity.slice(1, 16).map(buildArticleContext);
 
   // ⑦ JSON 保存
   const dayData = {
