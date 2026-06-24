@@ -40,19 +40,15 @@ const GOV_SOURCES = [
 ];
 
 // ── Google Alerts RSS ────────────────────────────────────────────────
-// Google アラートの RSS フィード URL を設定する。
-// 設定方法: Google アラート画面で「その他のオプション」→「配信先」を「RSSフィード」に変更し
-//           表示された URL を以下に追記する。
-//   URL 形式: https://www.google.com/alerts/feeds/<account_id>/<alert_id>
-// 環境変数 GOOGLE_ALERT_RSS_<n> で外部から注入することも可能。
 const GOOGLE_ALERT_SOURCES = [
-  // 例: { name: '行政DX Google Alert', url: 'https://www.google.com/alerts/feeds/XXXXX/YYYYY' },
-  // 環境変数から動的に読み込む（GOOGLE_ALERT_RSS_1, GOOGLE_ALERT_RSS_2, ... が設定されていれば追加）
-  ...Array.from({ length: 10 }, (_, i) => {
-    const url = process.env[`GOOGLE_ALERT_RSS_${i + 1}`];
-    const name = process.env[`GOOGLE_ALERT_NAME_${i + 1}`] || `Google Alert ${i + 1}`;
-    return url ? { name, url } : null;
-  }).filter(Boolean),
+  { name: 'Google Alert: クラウド×政府',     url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/3339123942717391102' },
+  { name: 'Google Alert: AI×行政',           url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/5311248654206121616' },
+  { name: 'Google Alert: AIガバナンス',       url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/9123460682984763914' },
+  { name: 'Google Alert: ガバメントクラウド', url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/5311248654206123495' },
+  { name: 'Google Alert: デジタル庁',         url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/849933549589956730'  },
+  { name: 'Google Alert: 情報システム調達',   url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/3339123942717391505' },
+  { name: 'Google Alert: 政府情報システム',   url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/9123460682984763418' },
+  { name: 'Google Alert: 生成AI×行政',       url: 'https://www.google.co.jp/alerts/feeds/11004476688740155475/5311248654206122373' },
 ];
 
 // ── DX Tips テーマ一覧 ───────────────────────────────────────────────
