@@ -156,8 +156,9 @@ function parseRSS(xml, sourceName) {
       const hrefMatch = block.match(/<link[^>]+href=["']([^"']+)["']/i);
       if (hrefMatch) rawLink = hrefMatch[1];
     }
-    // Google リダイレクト URL（google.com/url?...&url=ENCODED_URL）を実際の記事 URL に展開
+    // XML属性値の &amp; を & に戻してから Google リダイレクト URL を展開
     if (rawLink) {
+      rawLink = rawLink.replace(/&amp;/g, '&');
       const googleRedirect = rawLink.match(/[?&]url=([^&]+)/);
       if (googleRedirect) {
         try { rawLink = decodeURIComponent(googleRedirect[1]); } catch { /* keep original */ }
