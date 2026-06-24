@@ -27,12 +27,12 @@ export default function AboutPage() {
             <p>
               GovDX Today は、中央省庁・地方公共団体の
               <strong>PMO（プロジェクト管理オフィス）・PJMO（プロジェクト管理支援）担当者</strong>
-              を主な対象として、行政DX・AI活用に関する情報を毎日23時に自動集約・要約するダイジェストサイトです。
+              を主な対象として、行政DX・AI活用に関する情報を毎朝自動集約・要約するダイジェストサイトです。
             </p>
             <p>
-              政府公式RSSと無料ニュースメディアを横断的に収集し、AIが「PMO/PJMOとして何を確認・対応すべきか」
+              政府公式RSSとGoogle Alertsを横断的に収集し、AIが「PMO/PJMOとして何を確認・対応すべきか」
               の観点で要約・優先順位付けを行います。
-              その日のうちに更新されるため翌朝には最新情報が揃っており、担当者が本来業務に集中できる環境づくりへの貢献を目指しています。
+              毎朝6時頃に前日分が更新されるため、業務開始前に最新情報を確認できます。
             </p>
           </section>
 
@@ -135,9 +135,8 @@ export default function AboutPage() {
           <section className="about-section" aria-labelledby="update-heading">
             <h2 className="about-section-title" id="update-heading">更新ポリシー</h2>
             <ul>
-              <li>毎日<strong>日本時間 23:00</strong>（UTC 14:00）にGitHub Actionsによる自動更新を実施します</li>
-              <li>政府公式RSSフィード（11ソース）・無料ニュースメディア（7ソース）からその日の記事を収集します</li>
-              <li>RSSHub連携が有効な場合、政府機関・ITニュースのX（Twitter）公式アカウント（最大10アカウント）も巡回します</li>
+              <li>毎日UTC 14:00にジョブをキュー投入し、GitHub Actionsの遅延により<strong>日本時間 翌朝6:00頃</strong>に自動更新されます</li>
+              <li>政府公式RSSフィード（9ソース）・Google Alerts RSS（8キーワード）から記事を収集します</li>
               <li>Google Gemini AIによる要約・フィルタリング・重要度判定を経て自動公開します</li>
               <li>API障害・ネットワーク障害等により更新が遅延または欠落する場合があります</li>
               <li>過去90日分のアーカイブを保持します</li>
@@ -149,30 +148,22 @@ export default function AboutPage() {
           <section className="about-section" aria-labelledby="sources-heading">
             <h2 className="about-section-title" id="sources-heading">収集対象の情報源</h2>
 
-            <p><strong>政府・公的機関 RSS（11ソース）</strong></p>
+            <p><strong>政府・公的機関 RSS（9ソース）</strong></p>
             <ul>
-              <li><strong>セキュリティ:</strong> JPCERT/CC・IPA（情報処理推進機構）・NISC（内閣サイバーセキュリティセンター）・警察庁サイバー警察局</li>
+              <li><strong>セキュリティ:</strong> JPCERT/CC・IPA（情報処理推進機構）・NISC（内閣サイバーセキュリティセンター）</li>
               <li><strong>デジタル庁:</strong> 新着情報・note</li>
-              <li><strong>各省庁:</strong> 総務省・経済産業省・内閣府・厚生労働省・金融庁</li>
+              <li><strong>各省庁:</strong> 経済産業省・内閣府・厚生労働省・金融庁</li>
             </ul>
 
-            <p style={{ marginTop: '14px' }}><strong>無料ニュースメディア RSS（7ソース）</strong></p>
+            <p style={{ marginTop: '14px' }}><strong>Google Alerts RSS（8キーワード）</strong></p>
             <ul>
-              <li><strong>ITmedia系:</strong> NEWS / AI+ / エンタープライズ / @IT</li>
-              <li><strong>インプレス系:</strong> Internet Watch / クラウド Watch</li>
-              <li><strong>公共放送:</strong> NHKニュース（科学・IT）</li>
-            </ul>
-
-            <p style={{ marginTop: '14px' }}><strong>X（Twitter）公式アカウント（RSSHub連携時・最大10アカウント）</strong></p>
-            <ul>
-              <li><strong>政府機関:</strong> デジタル庁・JPCERT/CC・IPA・総務省・経済産業省・内閣官房・NISC</li>
-              <li><strong>ITニュース:</strong> ITmedia NEWS・ZDNet Japan・クラウド Watch</li>
+              <li>クラウド×政府 / AI×行政 / AIガバナンス / ガバメントクラウド</li>
+              <li>デジタル庁 / 情報システム調達 / 政府情報システム / 生成AI×行政</li>
             </ul>
 
             <p style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-muted)' }}>
               ※ 有料会員限定（ペイウォール）記事は自動的に除外します。<br />
-              ※ 各ソースのRSSフィード状況により収集件数は変動します。<br />
-              ※ X（Twitter）連携はRSSHub設定時のみ有効です。X社のAPI制限により取得できない場合もあります。
+              ※ 各ソースのRSSフィード状況により収集件数は変動します。
             </p>
           </section>
 
