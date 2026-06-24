@@ -2,26 +2,26 @@
   "dates": [
     {
       "date": "2026-06-24",
-      "summary_short": "JP PINTの「グローバルの取組（Japan Peppol…など3件",
-      "article_count": 3,
+      "summary_short": "データなし",
+      "article_count": 0,
       "has_security_alert": true
     },
     {
       "date": "2026-06-23",
-      "summary_short": "注意喚起: Fortinet製品に関連する認証情報の漏えいに…など16件",
-      "article_count": 16,
+      "summary_short": "注意喚起: Fortinet製品に関連する認証情報の漏えいに…など6件",
+      "article_count": 6,
       "has_security_alert": false
     },
     {
       "date": "2026-06-22",
-      "summary_short": "お知らせ：2026年度「JSAC2027運営業務」入札のご案…など16件",
-      "article_count": 16,
+      "summary_short": "「ガバメントAI 源内」における国産基盤モデルの評価設計…",
+      "article_count": 1,
       "has_security_alert": false
     },
     {
       "date": "2026-06-21",
-      "summary_short": "お知らせ：インシデント報告Webフォームメンテナンス（202…など4件",
-      "article_count": 4,
+      "summary_short": "お知らせ：JPCERT/CC Eyes「ツール分析結果シート…など3件",
+      "article_count": 3,
       "has_security_alert": false
     }
   ]

@@ -220,6 +220,21 @@ const SECTION_MAP = {
   dx:            '🏛️ 行政DXトピックス',
 };
 
+// ── フォールバック記事生成（Gemini 未使用時）────────────────────────────
+// Weekly Report 等の定期レポートは security_alerts に含めない
+const URGENT_SECURITY_PATTERNS = ['注意喚起', '緊急', 'JVN:'];
+
+function buildFallbackArticle(a) {
+  const isUrgent = a.articleType === 'security' &&
+    URGENT_SECURITY_PATTERNS.some((p) => a.title.includes(p));
+  return {
+    ...a,
+    summary: a.description?.slice(0, 150) || a.title,
+    importance_score: isUrgent ? 4 : a.articleType === 'ai_government' ? 3 : 2,
+    is_security_alert: isUrgent,
+  };
+}
+
 // ── Gemini API ────────────────────────────────────────────────────────
 async function callGemini(model, prompt) {
   const { GoogleGenerativeAI } = await import('@google/generative-ai');
@@ -597,21 +612,11 @@ async function main() {
       const is429 = String(err.message).includes('429');
       console.warn(`[WARN] Gemini APIエラー${is429 ? '（レート制限）' : ''}: ${err.message}`);
       // フォールバック: 要約なしで記事をそのまま使用
-      summarizedGov = govArticlesRaw.map((a) => ({
-        ...a,
-        summary: a.description?.slice(0, 150) || a.title,
-        importance_score: a.articleType === 'security' ? 4 : a.articleType === 'ai_government' ? 3 : 2,
-        is_security_alert: a.articleType === 'security',
-      }));
+      summarizedGov = govArticlesRaw.map(buildFallbackArticle);
     }
   } else {
     console.warn('[WARN] GEMINI_API_KEY 未設定。フォールバックデータを使用します。');
-    summarizedGov = govArticlesRaw.map((a) => ({
-      ...a,
-      summary: a.description?.slice(0, 150) || a.title,
-      importance_score: a.articleType === 'security' ? 4 : a.articleType === 'ai_government' ? 3 : 2,
-      is_security_alert: a.articleType === 'security',
-    }));
+    summarizedGov = govArticlesRaw.map(buildFallbackArticle);
     newsTopics = newsDeduped.slice(0, 10).map((a) => ({
       title: a.title,
       summary: a.description || a.title,
