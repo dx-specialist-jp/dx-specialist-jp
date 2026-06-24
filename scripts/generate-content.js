@@ -347,12 +347,7 @@ ${inputJson}
     });
   } catch (err) {
     console.warn(`[WARN] 政府記事要約エラー: ${err.message}`);
-    return articles.map((a) => ({
-      ...a,
-      summary: a.description?.slice(0, 150) || a.title,
-      importance_score: 2,
-      is_security_alert: false,
-    }));
+    return articles.map(buildFallbackArticle);
   }
 }
 
@@ -678,7 +673,7 @@ async function main() {
   const midPriorityGov  = nonSecurity.filter((a) => a.importance_score === 2);
 
   const heroArticle = highPriorityGov[0] ? buildArticleContext(highPriorityGov[0]) : null;
-  const subArticles = highPriorityGov.slice(1, 16).map(buildArticleContext);
+  const subArticles = highPriorityGov.slice(1, 6).map(buildArticleContext); // 最大5件
 
   // score 2 の政府記事をニューストピック形式に変換して追加
   const ARTICLE_TYPE_TO_CATEGORY = {

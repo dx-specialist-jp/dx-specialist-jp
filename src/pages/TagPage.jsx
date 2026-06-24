@@ -11,6 +11,7 @@ const ALL_TAGS = [
   { label: 'クラウド/インフラ', icon: '☁️' },
   { label: '制度/ガイドライン', icon: '📋' },
   { label: '自治体DX事例',     icon: '🏙️' },
+  { label: '調達・契約',       icon: '📝' },
   { label: '働き方/業務改革',  icon: '💼' },
 ];
 
