@@ -1,6 +1,6 @@
 /**
  * generate-content.js
- * 政府公式RSS＋無料ニュースRSSを収集し、Gemini APIでフィルタリング・要約して
+ * 政府公式RSS＋Google Alerts RSSを収集し、Gemini APIでフィルタリング・要約して
  * public/data/ に JSON として保存する。
  *
  * 使用方法: GEMINI_API_KEY=xxx node scripts/generate-content.js
@@ -155,7 +155,23 @@ function parseRSS(xml, sourceName) {
   while ((match = itemRegex.exec(xml)) !== null) {
     const block = match[0];
     const title = stripHtml(extractTag(block, 'title'));
-    const link = (extractTag(block, 'link') || extractTag(block, 'id')).replace(/\s/g, '');
+
+    // RSS: <link>URL</link> / Atom: <link href="URL" rel="alternate"/>
+    // Google Alerts は Atom 形式で href 属性に Google リダイレクト URL が入る
+    let rawLink = extractTag(block, 'link');
+    if (!rawLink) {
+      const hrefMatch = block.match(/<link[^>]+href=["']([^"']+)["']/i);
+      if (hrefMatch) rawLink = hrefMatch[1];
+    }
+    // Google リダイレクト URL（google.com/url?...&url=ENCODED_URL）を実際の記事 URL に展開
+    if (rawLink) {
+      const googleRedirect = rawLink.match(/[?&]url=([^&]+)/);
+      if (googleRedirect) {
+        try { rawLink = decodeURIComponent(googleRedirect[1]); } catch { /* keep original */ }
+      }
+    }
+    const link = (rawLink || extractTag(block, 'id')).replace(/\s/g, '');
+
     const pubDate = extractTag(block, 'pubDate') || extractTag(block, 'published') || extractTag(block, 'updated') || extractTag(block, 'dc:date');
     const description = stripHtml(extractTag(block, 'description') || extractTag(block, 'summary') || extractTag(block, 'content'));
 
@@ -202,7 +218,6 @@ const SECTION_MAP = {
   security:      '🔒 セキュリティ速報',
   ai_government: '🤖 行政AI最前線',
   dx:            '🏛️ 行政DXトピックス',
-  ai_trend:      '🌍 AI業界トレンド（政府視点）',
 };
 
 // ── Gemini API ────────────────────────────────────────────────────────
@@ -310,7 +325,7 @@ ${inputJson}
       const r = results.find((x) => x.index === i) || {};
       return {
         ...article,
-        summary: r.summary || article.description.slice(0, 150),
+        summary: r.summary || article.description?.slice(0, 150) || article.title,
         importance_score: Number(r.importance_score) || 2,
         is_security_alert: Boolean(r.is_security_alert),
       };
@@ -319,7 +334,7 @@ ${inputJson}
     console.warn(`[WARN] 政府記事要約エラー: ${err.message}`);
     return articles.map((a) => ({
       ...a,
-      summary: a.description.slice(0, 150) || a.title,
+      summary: a.description?.slice(0, 150) || a.title,
       importance_score: 2,
       is_security_alert: false,
     }));
@@ -561,7 +576,6 @@ async function main() {
   });
   console.log(`[INFO] Google Alerts 記事合計: ${newsArticlesRaw.length}件 → 重複排除後: ${newsDeduped.length}件`);
 
-  // ② b. X (Twitter) アカウントを巡回（RSSHub経由）
   let summarizedGov = [];
   let newsTopics = [];
   let dxTip = null;
