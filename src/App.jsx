@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header.jsx';
 import Sidebar from './components/Sidebar.jsx';
+import ReadingProgress from './components/ReadingProgress.jsx';
+import BackToTop from './components/BackToTop.jsx';
 import Home from './pages/Home.jsx';
 import DayPage from './pages/DayPage.jsx';
 import Archive from './pages/Archive.jsx';
@@ -44,6 +46,8 @@ export default function App() {
 
   return (
     <HashRouter>
+      <ReadingProgress />
+      <BackToTop />
       {/* スキップリンク — WCAG 2.4.1 */}
       <a
         href="#main-content"
