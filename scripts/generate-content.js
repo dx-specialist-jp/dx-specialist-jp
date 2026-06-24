@@ -141,9 +141,10 @@ function extractTag(xml, tag) {
 
 function stripHtml(html) {
   return html
-    .replace(/<[^>]+>/g, '')
+    .replace(/<[^>]+>/g, '')                               // 実タグを除去
     .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/<[^>]+>/g, '')                               // エンティティ展開後に再除去
     .replace(/\s+/g, ' ').trim();
 }
 
