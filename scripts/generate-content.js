@@ -124,7 +124,7 @@ function parseRSS(xml, sourceName) {
     // 36時間以内チェック（前日の業務時間帯記事もカバー）
     if (pubDate) {
       const age = Date.now() - new Date(pubDate).getTime();
-      if (age > 36 * 60 * 60 * 1000) continue;
+      if (Number.isNaN(age) || age > 36 * 60 * 60 * 1000) continue;
     }
 
     items.push({ title, url: link, description: description.slice(0, 400), pubDate, sourceName });
@@ -163,7 +163,7 @@ const SECTION_MAP = {
 
 // ── フォールバック記事生成（Gemini 未使用時）────────────────────────────
 // Weekly Report 等の定期レポートは security_alerts に含めない
-const URGENT_SECURITY_PATTERNS = ['注意喚起', '緊急', 'JVN:'];
+const URGENT_SECURITY_PATTERNS = ['注意喚起', '緊急', 'JVN:', 'CVE-'];
 
 function buildFallbackArticle(a) {
   const isUrgent = a.articleType === 'security' &&
@@ -278,7 +278,7 @@ ${inputJson}
     const text = await callGemini(model, prompt);
     const results = parseJsonFromText(text);
     return articles.map((article, i) => {
-      const r = results.find((x) => x.index === i) || {};
+      const r = results.find((x) => Number(x.index) === i) || {};
       return {
         ...article,
         summary: r.summary || article.description?.slice(0, 150) || article.title,
@@ -502,10 +502,12 @@ async function main() {
   mkdirSync(DATA_DIR, { recursive: true });
 
   // ① 政府公式記事を収集
-  console.log('[INFO] 政府公式RSSを収集中...');
+  console.log('[INFO] 政府公式RSSを収集中（並列）...');
+  const govResults = await Promise.all(
+    GOV_SOURCES.map((src) => fetchFeed(src.url, src.name, src.charset).then((items) => ({ src, items })))
+  );
   const govArticlesRaw = [];
-  for (const src of GOV_SOURCES) {
-    const items = await fetchFeed(src.url, src.name, src.charset);
+  for (const { src, items } of govResults) {
     items.forEach((a) => govArticlesRaw.push({ ...a, articleType: src.type }));
     console.log(`[INFO]   ${src.name}: ${items.length}件`);
   }
@@ -514,9 +516,11 @@ async function main() {
   // ② Google Alerts RSS を収集
   const newsArticlesRaw = [];
   if (GOOGLE_ALERT_SOURCES.length > 0) {
-    console.log('[INFO] Google Alerts RSSを収集中...');
-    for (const src of GOOGLE_ALERT_SOURCES) {
-      const items = await fetchFeed(src.url, src.name);
+    console.log('[INFO] Google Alerts RSSを収集中（並列）...');
+    const alertResults = await Promise.all(
+      GOOGLE_ALERT_SOURCES.map((src) => fetchFeed(src.url, src.name).then((items) => ({ src, items })))
+    );
+    for (const { src, items } of alertResults) {
       newsArticlesRaw.push(...items);
       console.log(`[INFO]   ${src.name}: ${items.length}件`);
     }
@@ -549,8 +553,16 @@ async function main() {
     } catch (err) {
       const is429 = String(err.message).includes('429');
       console.warn(`[WARN] Gemini APIエラー${is429 ? '（レート制限）' : ''}: ${err.message}`);
-      // フォールバック: 要約なしで記事をそのまま使用
       summarizedGov = govArticlesRaw.map(buildFallbackArticle);
+      newsTopics = newsDeduped.slice(0, 10).map((a) => ({
+        title: a.title,
+        summary: a.description || a.title,
+        relevance: '',
+        category: 'その他',
+        source: a.sourceName,
+        url: a.url,
+        score: 0,
+      }));
     }
   } else {
     console.warn('[WARN] GEMINI_API_KEY 未設定。フォールバックデータを使用します。');
