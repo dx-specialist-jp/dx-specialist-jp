@@ -287,6 +287,7 @@ ${inputJson}
       };
     });
   } catch (err) {
+    if (String(err.message).includes('429')) throw err;
     console.warn(`[WARN] 政府記事要約エラー: ${err.message}`);
     return articles.map(buildFallbackArticle);
   }
@@ -355,6 +356,7 @@ PMO/PJMO業務に関連性の高い上位${maxCount}本を選定し、以下のJ
     const results = parseJsonFromText(text);
     return results.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, maxCount);
   } catch (err) {
+    if (String(err.message).includes('429')) throw err;
     console.warn(`[WARN] ニュースフィルタエラー: ${err.message}`);
     // フォールバック: Gemini失敗時は最新N件をそのまま返す
     return articles.slice(0, maxCount).map((a) => ({
