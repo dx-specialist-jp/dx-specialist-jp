@@ -14,6 +14,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { callGemini, parseJsonFromText } from './gemini-utils.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -176,36 +177,7 @@ function buildFallbackArticle(a) {
   };
 }
 
-// ── Gemini API ────────────────────────────────────────────────────────
-async function callGemini(model, prompt) {
-  const { GoogleGenerativeAI } = await import('@google/generative-ai');
-  const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const m = genai.getGenerativeModel({ model });
-
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const result = await m.generateContent(prompt);
-      return result.response.text().trim();
-    } catch (err) {
-      const msg = String(err.message);
-      // 「current quota」はRPD日次上限 → リトライ不可。それ以外の429はRPM → 待機してリトライ
-      const isRpmLimit = msg.includes('429') && !msg.includes('current quota');
-      if (isRpmLimit && attempt < 2) {
-        const wait = (attempt + 1) * 30000;
-        console.warn(`[WARN] Gemini RPMリミット - ${wait / 1000}秒後にリトライ (${attempt + 1}/2)`);
-        await new Promise((r) => setTimeout(r, wait));
-      } else {
-        throw err;
-      }
-    }
-  }
-}
-
-function parseJsonFromText(text) {
-  const cleaned = text
-    .replace(/^```json\s*/m, '').replace(/^```\s*/m, '').replace(/```\s*$/m, '').trim();
-  return JSON.parse(cleaned);
-}
+// ── Gemini API: callGemini / parseJsonFromText は gemini-utils.js から import ──
 
 // ── (A) 政府記事バッチ要約 ──────────────────────────────────────────
 async function summarizeGovArticles(articles, model) {
@@ -730,10 +702,11 @@ async function main() {
   let newsSummary = null;
   let newsTopicsBrief = null;
   if (geminiOk) {
-    console.log('[INFO] 今日のニュース要約を生成中...');
-    newsSummary = await generateNewsSummary(heroArticle, subArticles, newsTopics, model);
-    console.log('[INFO] ニューストピックアクションブリーフを生成中...');
-    newsTopicsBrief = await generateNewsTopicsBrief(newsTopics, model);
+    console.log('[INFO] 今日のニュース要約・ブリーフを並列生成中...');
+    [newsSummary, newsTopicsBrief] = await Promise.all([
+      generateNewsSummary(heroArticle, subArticles, newsTopics, model),
+      generateNewsTopicsBrief(newsTopics, model),
+    ]);
   }
 
   // ⑦ JSON 保存

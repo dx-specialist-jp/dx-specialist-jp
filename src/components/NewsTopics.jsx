@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 function NewsTopicsBrief({ actions }) {
-  if (!actions || actions.length === 0) return null;
+  if (!Array.isArray(actions) || actions.length === 0) return null;
   return (
     <div className="news-topics-brief">
       <div className="news-topics-brief-header">

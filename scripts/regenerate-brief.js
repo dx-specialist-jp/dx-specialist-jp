@@ -1,46 +1,16 @@
-/**
- * regenerate-brief.js
- * 既存の日次JSONファイルに news_topics_brief / news_summary を追加・上書きする。
- * RSSフェッチは行わず、既存の news_topics をもとに Gemini API で再生成する。
- *
- * 使い方: GEMINI_API_KEY=xxx node scripts/regenerate-brief.js [YYYY-MM-DD] [YYYY-MM-DD] ...
- *         省略時は最新7日分を対象にする
- */
+// 使い方: GEMINI_API_KEY=xxx node scripts/regenerate-brief.js [YYYY-MM-DD] ...
+//         省略時は最新7日分を対象にする
 
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { callGemini, parseJsonFromText } from './gemini-utils.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = resolve(__dirname, '..', 'public', 'data');
 
-async function callGemini(model, prompt) {
-  const { GoogleGenerativeAI } = await import('@google/generative-ai');
-  const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const m = genai.getGenerativeModel({ model });
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const result = await m.generateContent(prompt);
-      return result.response.text().trim();
-    } catch (err) {
-      const isRpm = String(err.message).includes('429') && !String(err.message).includes('current quota');
-      if (isRpm && attempt < 2) {
-        const wait = (attempt + 1) * 30000;
-        console.warn(`[WARN] RPMリミット - ${wait / 1000}秒後リトライ`);
-        await new Promise((r) => setTimeout(r, wait));
-      } else throw err;
-    }
-  }
-}
-
-function parseJsonFromText(text) {
-  const cleaned = text
-    .replace(/^```json\s*/m, '').replace(/^```\s*/m, '').replace(/```\s*$/m, '').trim();
-  return JSON.parse(cleaned);
-}
-
 async function generateBrief(newsTopics, model) {
-  if (!newsTopics || newsTopics.length === 0) return null;
+  if (newsTopics.length === 0) return null;
   const inputJson = JSON.stringify(
     newsTopics.slice(0, 15).map((t) => ({
       title: t.title, summary: t.summary, relevance: t.relevance, category: t.category,
@@ -60,6 +30,7 @@ PMO/PJMO担当者が「今日のニュースを受けて、何をすべきか・
 - セキュリティ関連があれば必ず最初に入れる
 - 省庁内での横展開・情報共有が必要なものは明示する
 - 「重要」「画期的」等の主観的形容詞は使わない
+- 事実ベースで具体的に（例: 「AI調達仕様書のセキュリティ要件を最新のIPA推奨に照合する」）
 
 対象ニューストピック:
 ${inputJson}
@@ -68,17 +39,24 @@ ${inputJson}
 {
   "actions": ["アクション1", "アクション2", "アクション3"]
 }`;
-  const text = await callGemini(model, prompt);
-  const result = parseJsonFromText(text);
-  return Array.isArray(result.actions) ? result.actions.filter((a) => typeof a === 'string') : null;
+  try {
+    const text = await callGemini(model, prompt);
+    const result = parseJsonFromText(text);
+    return Array.isArray(result.actions) ? result.actions.filter((a) => typeof a === 'string') : null;
+  } catch (err) {
+    console.warn(`[WARN] ブリーフ生成エラー: ${err.message}`);
+    return null;
+  }
 }
 
-async function generateSummary(newsTopics, model) {
-  if (!newsTopics || newsTopics.length === 0) return null;
-  const inputJson = JSON.stringify(
-    newsTopics.slice(0, 10).map((t) => ({ title: t.title, summary: t.summary, source: t.source })),
-    null, 2
-  );
+async function generateSummary(data, model) {
+  const allArticles = [
+    ...(data.hero_article ? [{ title: data.hero_article.title, summary: data.hero_article.summary, source: data.hero_article.source_name }] : []),
+    ...(data.sub_articles || []).map((a) => ({ title: a.title, summary: a.summary, source: a.source_name })),
+    ...(data.news_topics || []).slice(0, 8).map((t) => ({ title: t.title, summary: t.summary, source: t.source })),
+  ];
+  if (allArticles.length === 0) return null;
+  const inputJson = JSON.stringify(allArticles, null, 2);
   const prompt = `あなたは中央省庁のPMO・PJMO担当者向けの行政DX・AI活用の専門キュレーターです。
 
 以下の記事一覧を読んで、PMO/PJMO担当者が「今日知っておくべき重要ポイント」を箇条書きで要約してください。
@@ -97,9 +75,14 @@ ${inputJson}
 {
   "points": ["ポイント1", "ポイント2", "ポイント3"]
 }`;
-  const text = await callGemini(model, prompt);
-  const result = parseJsonFromText(text);
-  return Array.isArray(result.points) ? result.points.filter((p) => typeof p === 'string') : null;
+  try {
+    const text = await callGemini(model, prompt);
+    const result = parseJsonFromText(text);
+    return Array.isArray(result.points) ? result.points.filter((p) => typeof p === 'string') : null;
+  } catch (err) {
+    console.warn(`[WARN] サマリー生成エラー: ${err.message}`);
+    return null;
+  }
 }
 
 async function main() {
@@ -109,10 +92,8 @@ async function main() {
     process.exit(1);
   }
 
-  // 対象日を決定
   let targets = process.argv.slice(2);
   if (targets.length === 0) {
-    // 最新7日分の JSON ファイルを対象
     targets = readdirSync(DATA_DIR)
       .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
       .sort()
@@ -137,13 +118,14 @@ async function main() {
       continue;
     }
 
-    console.log(`[INFO] ${date}: brief 生成中...`);
-    data.news_topics_brief = await generateBrief(topics, model);
+    console.log(`[INFO] ${date}: brief・summary を並列生成中...`);
+    const [brief, summary] = await Promise.all([
+      generateBrief(topics, model),
+      data.news_summary ? Promise.resolve(null) : generateSummary(data, model),
+    ]);
 
-    if (!data.news_summary) {
-      console.log(`[INFO] ${date}: summary 生成中...`);
-      data.news_summary = await generateSummary(topics, model);
-    }
+    if (brief !== null) data.news_topics_brief = brief;
+    if (summary !== null) data.news_summary = summary;
 
     writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
     console.log(`[INFO] ${date}: 更新完了`);
