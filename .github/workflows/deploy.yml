@@ -1,0 +1,55 @@
+name: Deploy ─ GovDX Today
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'vite.config.js'
+      - 'package*.json'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Node.js 20 セットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 依存パッケージをインストール
+        run: npm ci
+
+      - name: Vite ビルド
+        run: npm run build
+
+      - name: GitHub Pages 設定
+        uses: actions/configure-pages@v5
+
+      - name: Pages アーティファクトをアップロード
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+      - name: GitHub Pages にデプロイ
+        id: deployment
+        uses: actions/deploy-pages@v4
