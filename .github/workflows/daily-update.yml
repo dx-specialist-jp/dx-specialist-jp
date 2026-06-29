@@ -43,6 +43,17 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           TARGET_DATE: ${{ inputs.target_date }}
 
+      - name: AI要約・ブリーフ補完（未生成分のみ）
+        run: |
+          DATE="${{ inputs.target_date }}"
+          if [ -z "$DATE" ]; then
+            DATE=$(TZ=Asia/Tokyo date +'%Y-%m-%d')
+          fi
+          node scripts/regenerate-brief.js "$DATE"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        continue-on-error: true
+
       - name: Vite ビルド
         run: npm run build
 

@@ -118,10 +118,17 @@ async function main() {
       continue;
     }
 
+    const needsBrief = !data.news_topics_brief || data.news_topics_brief.length === 0;
+    const needsSummary = !data.news_summary || data.news_summary.length === 0;
+    if (!needsBrief && !needsSummary) {
+      console.log(`[INFO] ${date}: brief・summary 既存 → スキップ`);
+      continue;
+    }
+
     console.log(`[INFO] ${date}: brief・summary を並列生成中...`);
     const [brief, summary] = await Promise.all([
-      generateBrief(topics, model),
-      data.news_summary ? Promise.resolve(null) : generateSummary(data, model),
+      needsBrief ? generateBrief(topics, model) : Promise.resolve(null),
+      needsSummary ? generateSummary(data, model) : Promise.resolve(null),
     ]);
 
     if (brief !== null) data.news_topics_brief = brief;

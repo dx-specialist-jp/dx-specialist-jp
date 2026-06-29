@@ -698,10 +698,10 @@ async function main() {
     return (b.score || 0) - (a.score || 0);
   });
 
-  // ⑤ 今日のニュース要約を生成（記事選定後に実施・APIが成功した場合のみ）
+  // ⑤ 今日のニュース要約を生成（APIキーがあれば常に試みる。各関数内でエラー時はnullを返す）
   let newsSummary = null;
   let newsTopicsBrief = null;
-  if (geminiOk) {
+  if (hasApiKey) {
     console.log('[INFO] 今日のニュース要約・ブリーフを並列生成中...');
     [newsSummary, newsTopicsBrief] = await Promise.all([
       generateNewsSummary(heroArticle, subArticles, newsTopics, model),
