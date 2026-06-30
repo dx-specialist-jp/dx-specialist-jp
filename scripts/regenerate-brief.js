@@ -125,17 +125,20 @@ async function main() {
       continue;
     }
 
-    console.log(`[INFO] ${date}: brief・summary を並列生成中...`);
-    const [brief, summary] = await Promise.all([
-      needsBrief ? generateBrief(topics, model) : Promise.resolve(null),
-      needsSummary ? generateSummary(data, model) : Promise.resolve(null),
-    ]);
+    console.log(`[INFO] ${date}: brief・summary を逐次生成中...`);
+    const brief = needsBrief ? await generateBrief(topics, model) : null;
+    // brief と summary の間に少し間を置いてレート制限を回避
+    if (needsBrief && needsSummary) await new Promise((r) => setTimeout(r, 5000));
+    const summary = needsSummary ? await generateSummary(data, model) : null;
 
     if (brief !== null) data.news_topics_brief = brief;
     if (summary !== null) data.news_summary = summary;
 
     writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
     console.log(`[INFO] ${date}: 更新完了`);
+
+    // 複数日処理時に連続 API 呼び出しでレート制限に当たらないよう日付間で休止
+    await new Promise((r) => setTimeout(r, 8000));
   }
 
   console.log('[INFO] 完了');

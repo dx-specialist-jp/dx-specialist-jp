@@ -699,14 +699,14 @@ async function main() {
   });
 
   // ⑤ 今日のニュース要約を生成（APIキーがあれば常に試みる。各関数内でエラー時はnullを返す）
+  // 並列呼び出しは同時に2スロット消費してレート制限を悪化させるため、逐次実行する
   let newsSummary = null;
   let newsTopicsBrief = null;
   if (hasApiKey) {
-    console.log('[INFO] 今日のニュース要約・ブリーフを並列生成中...');
-    [newsSummary, newsTopicsBrief] = await Promise.all([
-      generateNewsSummary(heroArticle, subArticles, newsTopics, model),
-      generateNewsTopicsBrief(newsTopics, model),
-    ]);
+    console.log('[INFO] 今日のニュース要約を生成中...');
+    newsSummary = await generateNewsSummary(heroArticle, subArticles, newsTopics, model);
+    console.log('[INFO] 今日のアクションブリーフを生成中...');
+    newsTopicsBrief = await generateNewsTopicsBrief(newsTopics, model);
   }
 
   // ⑦ JSON 保存

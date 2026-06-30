@@ -45,11 +45,11 @@ jobs:
 
       - name: AI要約・ブリーフ補完（未生成分のみ）
         run: |
-          DATE="${{ inputs.target_date }}"
-          if [ -z "$DATE" ]; then
-            DATE=$(TZ=Asia/Tokyo date +'%Y-%m-%d')
-          fi
-          node scripts/regenerate-brief.js "$DATE"
+          # generate-content.js が消費したレート制限の回復を待つ
+          echo "[INFO] Gemini APIレート制限回復のため90秒待機..."
+          sleep 90
+          # 日付引数なし = 直近7日分を処理。前日分の取りこぼしも自動補完される
+          node scripts/regenerate-brief.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         continue-on-error: true
