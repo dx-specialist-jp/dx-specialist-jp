@@ -137,8 +137,8 @@ async function main() {
     writeFileSync(path, JSON.stringify(data, null, 2), 'utf-8');
     console.log(`[INFO] ${date}: 更新完了`);
 
-    // 複数日処理時に連続 API 呼び出しでレート制限に当たらないよう日付間で休止
-    await new Promise((r) => setTimeout(r, 8000));
+    // 複数日処理時の連続 API 呼び出しによるレート制限を避けるため日付間で休止
+    await new Promise((r) => setTimeout(r, 15000));
   }
 
   console.log('[INFO] 完了');

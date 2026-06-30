@@ -698,15 +698,18 @@ async function main() {
     return (b.score || 0) - (a.score || 0);
   });
 
-  // ⑤ 今日のニュース要約を生成（APIキーがあれば常に試みる。各関数内でエラー時はnullを返す）
-  // 並列呼び出しは同時に2スロット消費してレート制限を悪化させるため、逐次実行する
+  // ⑤ 今日のニュース要約を生成
+  // メイン処理（gov要約・newsフィルタ）が成功した場合のみここで生成する。
+  // 失敗（レート制限など）時は null のまま保存し、5分後に regenerate-brief.js が補完する。
   let newsSummary = null;
   let newsTopicsBrief = null;
-  if (hasApiKey) {
+  if (hasApiKey && geminiOk) {
     console.log('[INFO] 今日のニュース要約を生成中...');
     newsSummary = await generateNewsSummary(heroArticle, subArticles, newsTopics, model);
     console.log('[INFO] 今日のアクションブリーフを生成中...');
     newsTopicsBrief = await generateNewsTopicsBrief(newsTopics, model);
+  } else if (!geminiOk) {
+    console.log('[INFO] メインAPI処理が未成功のため、summary/brief は regenerate-brief.js に委譲');
   }
 
   // ⑦ JSON 保存
