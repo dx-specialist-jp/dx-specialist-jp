@@ -128,7 +128,7 @@ function parseRSS(xml, sourceName) {
       if (Number.isNaN(age) || age > 36 * 60 * 60 * 1000) continue;
     }
 
-    items.push({ title, url: link, description: description.slice(0, 400), pubDate, sourceName });
+    items.push({ title, url: link, description: description.slice(0, 200), pubDate, sourceName });
   }
   return items;
 }
@@ -183,15 +183,20 @@ function buildFallbackArticle(a) {
 async function summarizeGovArticles(articles, model) {
   if (articles.length === 0) return [];
 
+  // 件数が多い場合は最新20件に絞る（トークン増加防止）
+  const targetArticles = articles.slice(0, 20);
+  if (articles.length > targetArticles.length) {
+    console.warn(`[WARN] 政府記事が${targetArticles.length}件を超えています (${articles.length}件)。超過分はフォールバック処理します`);
+  }
   const inputJson = JSON.stringify(
-    articles.map((a, i) => ({
+    targetArticles.map((a, i) => ({
       index: i,
       source: a.sourceName,
       title: a.title,
       content: a.description,
-    })),
-    null, 2
+    }))
   );
+  console.log(`[INFO] 政府記事要約: ${targetArticles.length}件 / 入力サイズ: ${inputJson.length}文字`);
 
   const prompt = `あなたは中央省庁のPMO（プロジェクト管理オフィス）・PJMO（プロジェクト管理支援）担当者を読者に持つ、行政DX・AI活用の専門キュレーターです。
 
@@ -249,7 +254,12 @@ ${inputJson}
   try {
     const text = await callGemini(model, prompt);
     const results = parseJsonFromText(text);
-    return articles.map((article, i) => {
+    if (!Array.isArray(results)) {
+      console.warn('[WARN] 政府記事要約: GeminiがJSON配列以外を返しました。フォールバックを使用します');
+      return articles.map(buildFallbackArticle);
+    }
+    // targetArticles だけが Gemini に渡されているので、それ以外はフォールバック
+    const summarized = targetArticles.map((article, i) => {
       const r = results.find((x) => Number(x.index) === i) || {};
       return {
         ...article,
@@ -258,6 +268,8 @@ ${inputJson}
         is_security_alert: Boolean(r.is_security_alert),
       };
     });
+    const remaining = articles.slice(targetArticles.length).map(buildFallbackArticle);
+    return [...summarized, ...remaining];
   } catch (err) {
     if (String(err.message).includes('429')) throw err;
     console.warn(`[WARN] 政府記事要約エラー: ${err.message}`);
@@ -269,15 +281,18 @@ ${inputJson}
 async function filterAndSummarizeNews(articles, model, maxCount = 5) {
   if (articles.length === 0) return [];
 
+  // 入力件数を40件に制限してトークン増加を防ぐ
+  const targetArticles = articles.slice(0, 40);
+  // URLはプロンプトから除外し、インデックスでマッチング（トークン削減）
   const inputJson = JSON.stringify(
-    articles.map((a) => ({
+    targetArticles.map((a, i) => ({
+      index: i,
       title: a.title,
       summary: a.description,
       source: a.sourceName,
-      url: a.url,
-    })),
-    null, 2
+    }))
   );
+  console.log(`[INFO] ニュースフィルタ: ${targetArticles.length}件 / 入力サイズ: ${inputJson.length}文字`);
 
   const prompt = `あなたは中央省庁のPMO（プロジェクト管理オフィス）・PJMO（プロジェクト管理支援）担当者を読者に持つ、行政DX・AI活用の専門キュレーターです。
 
@@ -302,8 +317,6 @@ async function filterAndSummarizeNews(articles, model, maxCount = 5) {
 【要約ルール】
 - summary: 事実を2行以内（100字以内）で要約。「何が変わった/発表された」を明確に
 - relevance: 「○○担当のPMO/PJMOは□□を確認/対応すること」という形式で1文（具体的な役割・アクションを示す）
-  例: 「ガバメントクラウド移行プロジェクトのPJMOは、調達仕様書のセキュリティ要件を本件に合わせて見直す必要がある」
-  例: 「AI導入を検討中のPMOは、本事例を先行事例として事業計画書に参照できる」
 - category: 以下から最も適切な1つを選ぶ
   「AI活用」「セキュリティ」「クラウド/インフラ」「制度/ガイドライン」「自治体DX事例」「調達・契約」「働き方/業務改革」
 
@@ -313,12 +326,10 @@ ${inputJson}
 PMO/PJMO業務に関連性の高い上位${maxCount}本を選定し、以下のJSONのみを出力すること（説明文・コードブロック記号は不要）:
 [
   {
-    "title": "記事タイトル（原文のまま）",
+    "index": 元の記事インデックス（整数）,
     "summary": "2行以内の要約",
     "relevance": "PMO/PJMOとしての具体的な対応・確認事項を1文で",
     "category": "カテゴリタグ",
-    "source": "出典サイト名",
-    "url": "記事URL",
     "score": 関連性スコア（1〜10の整数）
   }
 ]`;
@@ -326,11 +337,47 @@ PMO/PJMO業務に関連性の高い上位${maxCount}本を選定し、以下のJ
   try {
     const text = await callGemini(model, prompt);
     const results = parseJsonFromText(text);
-    return results.sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, maxCount);
+    if (!Array.isArray(results)) {
+      console.warn('[WARN] ニュースフィルタ: GeminiがJSON配列以外を返しました。フォールバックを使用します');
+      return articles.slice(0, maxCount).map((a) => ({
+        title: a.title, summary: a.description || a.title,
+        relevance: '', category: 'その他', source: a.sourceName, url: a.url, score: 0,
+      }));
+    }
+    const seenIndices = new Set();
+    return results
+      .sort((a, b) => (b.score || 0) - (a.score || 0))
+      .filter((r) => {
+        // null は Number(null)===0 で先頭記事に誤ってマップされるため明示的に除外
+        if (r.index == null) {
+          console.warn('[WARN] ニュースフィルタ: indexなしの結果をスキップ');
+          return false;
+        }
+        const idx = Number(r.index);
+        if (!Number.isInteger(idx) || idx < 0 || idx >= targetArticles.length) {
+          console.warn(`[WARN] ニュースフィルタ: 無効なindex (${r.index}) をスキップ`);
+          return false;
+        }
+        if (seenIndices.has(idx)) return false;
+        seenIndices.add(idx);
+        return true;
+      })
+      .slice(0, maxCount)
+      .map((r) => {
+        const orig = targetArticles[Number(r.index)];
+        return {
+          title: orig.title || '',
+          summary: r.summary || orig.description || orig.title || '',
+          relevance: r.relevance || '',
+          category: r.category || 'その他',
+          source: orig.sourceName || '',
+          url: orig.url || '',
+          score: Number(r.score) || 0,
+        };
+      });
   } catch (err) {
     if (String(err.message).includes('429')) throw err;
     console.warn(`[WARN] ニュースフィルタエラー: ${err.message}`);
-    // フォールバック: Gemini失敗時は最新N件をそのまま返す
     return articles.slice(0, maxCount).map((a) => ({
       title: a.title,
       summary: a.description || a.title,

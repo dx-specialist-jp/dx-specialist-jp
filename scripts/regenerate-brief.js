@@ -94,10 +94,11 @@ async function main() {
 
   let targets = process.argv.slice(2);
   if (targets.length === 0) {
+    // デフォルトは直近3日分（前々日・前日・今日）。連続2日障害まで回収できる
     targets = readdirSync(DATA_DIR)
       .filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
       .sort()
-      .slice(-7)
+      .slice(-3)
       .map((f) => f.replace('.json', ''));
   }
   console.log(`[INFO] 対象日: ${targets.join(', ')}`);
@@ -138,7 +139,7 @@ async function main() {
     console.log(`[INFO] ${date}: 更新完了`);
 
     // 複数日処理時の連続 API 呼び出しによるレート制限を避けるため日付間で休止
-    await new Promise((r) => setTimeout(r, 15000));
+    await new Promise((r) => setTimeout(r, 30000));
   }
 
   console.log('[INFO] 完了');
