@@ -45,11 +45,15 @@ jobs:
 
       - name: AI要約・ブリーフ補完（未生成分のみ）
         run: |
-          # generate-content.js の Gemini API 呼び出し後にレート制限が完全回復するまで待機
-          # 429 リトライの最大待機（3回×65秒=195秒）を十分に上回る 300 秒とする
+          # generate-content.js の Gemini API 呼び出し後にレート制限が完全回復するまで待機。
+          # gemini-utils.js のリトライ待機は最大 3回×70秒=210秒/呼び出し（MAX_ATTEMPTS=4）。
+          # generate-content.js の政府記事要約・ニュースフィルタは並列実行のため、
+          # このステップ開始前の最大待機は概ね210秒 — 300秒あれば十分な余裕がある。
+          # なお、クォータ0（回復不可能）は gemini-utils.js が即座に失敗させるため
+          # この待機は効かず、regenerate-brief.js 側も数秒で打ち切られる。
           echo "[INFO] Gemini APIレート制限回復のため5分待機..."
           sleep 300
-          # 日付引数なし = 直近7日分を処理。前日分の取りこぼしも自動補完される
+          # 日付引数なし = 直近3日分を処理。前日までの取りこぼしを自動補完する
           node scripts/regenerate-brief.js
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

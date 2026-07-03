@@ -6,15 +6,16 @@
  * 使用方法: GEMINI_API_KEY=xxx node scripts/generate-content.js
  *
  * 環境変数:
- *   GEMINI_API_KEY  - Google Gemini API キー（必須）
- *   GEMINI_MODEL    - 使用モデル（省略時: gemini-2.0-flash）
- *   TARGET_DATE     - 対象日 YYYY-MM-DD（省略時: 今日 JST）
+ *   GEMINI_API_KEY          - Google Gemini API キー（必須）
+ *   GEMINI_MODEL            - 使用モデル（省略時: gemini-2.0-flash）
+ *   TARGET_DATE             - 対象日 YYYY-MM-DD（省略時: 今日 JST）
+ *   GEMINI_MAX_CALLS_PER_RUN - 1実行あたりのGemini呼び出し上限（省略時: 16。gemini-utils.js参照）
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { callGemini, parseJsonFromText } from './gemini-utils.js';
+import { callGemini, parseJsonFromText, isFatalGeminiError, generateSummaryPoints, generateActionBrief, buildSummaryInput } from './gemini-utils.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -271,7 +272,7 @@ ${inputJson}
     const remaining = articles.slice(targetArticles.length).map(buildFallbackArticle);
     return [...summarized, ...remaining];
   } catch (err) {
-    if (String(err.message).includes('429')) throw err;
+    if (isFatalGeminiError(err) || err.rateLimited) throw err;
     console.warn(`[WARN] 政府記事要約エラー: ${err.message}`);
     return articles.map(buildFallbackArticle);
   }
@@ -376,7 +377,7 @@ PMO/PJMO業務に関連性の高い上位${maxCount}本を選定し、以下のJ
         };
       });
   } catch (err) {
-    if (String(err.message).includes('429')) throw err;
+    if (isFatalGeminiError(err) || err.rateLimited) throw err;
     console.warn(`[WARN] ニュースフィルタエラー: ${err.message}`);
     return articles.slice(0, maxCount).map((a) => ({
       title: a.title,
@@ -390,107 +391,8 @@ PMO/PJMO業務に関連性の高い上位${maxCount}本を選定し、以下のJ
   }
 }
 
-// ── (C) 今日のニュース要約生成 ──────────────────────────────────────
-async function generateNewsSummary(heroArticle, subArticles, newsTopics, model) {
-  const allArticles = [
-    ...(heroArticle ? [{ title: heroArticle.title, summary: heroArticle.summary, source: heroArticle.source_name }] : []),
-    ...(subArticles || []).map((a) => ({ title: a.title, summary: a.summary, source: a.source_name })),
-    ...(newsTopics || []).slice(0, 8).map((t) => ({ title: t.title, summary: t.summary, source: t.source })),
-  ];
-
-  if (allArticles.length === 0) return null;
-
-  const inputJson = JSON.stringify(allArticles, null, 2);
-
-  const prompt = `あなたは中央省庁のPMO（プロジェクト管理オフィス）・PJMO（プロジェクト管理支援）担当者向けの行政DX・AI活用の専門キュレーターです。
-
-以下は本日キュレーションされた行政DX・AI・セキュリティ関連の記事一覧です。
-これらを読んで、PMO/PJMO担当者が「今日知っておくべき重要ポイント」を箇条書きで要約してください。
-
-【要約ルール】
-- 4〜6箇条で、各箇条は1行（40〜70字）
-- 「何が起きたか・何が変わったか」を事実ベースで端的に
-- 重要度の高いもの（セキュリティ速報・政府の重要決定・調達・AI活用）を優先
-- 複数記事を無理に1行にまとめず、独立したポイントとして列挙
-- 行政用語・省略語は省略せず正式名で記載
-- 「重要」「画期的」等の主観的形容詞は使わない
-
-対象記事:
-${inputJson}
-
-以下のJSON形式のみで出力すること（説明文・コードブロック記号は不要）:
-{
-  "points": [
-    "箇条書き1",
-    "箇条書き2",
-    "箇条書き3"
-  ]
-}`;
-
-  try {
-    const text = await callGemini(model, prompt);
-    const result = parseJsonFromText(text);
-    return Array.isArray(result.points)
-      ? result.points.filter((p) => typeof p === 'string')
-      : null;
-  } catch (err) {
-    console.warn(`[WARN] ニュース要約生成エラー: ${err.message}`);
-    return null;
-  }
-}
-
-// ── (D) ニューストピック アクションブリーフ生成 ──────────────────────
-async function generateNewsTopicsBrief(newsTopics, model) {
-  if (!newsTopics || newsTopics.length === 0) return null;
-
-  const inputJson = JSON.stringify(
-    newsTopics.slice(0, 15).map((t) => ({
-      title: t.title,
-      summary: t.summary,
-      relevance: t.relevance,
-      category: t.category,
-    })),
-    null, 2
-  );
-
-  const prompt = `あなたは中央省庁のPMO（プロジェクト管理オフィス）・PJMO（プロジェクト管理支援）担当者向けのアドバイザーです。
-
-以下は本日のニューストピック一覧です。
-PMO/PJMO担当者が「今日のニュースを受けて、何をすべきか・何を確認すべきか」を即座に把握できる
-アクション指向のブリーフィングを作成してください。
-
-【作成ルール】
-- 4〜6箇条で、各箇条は1文（50〜80字）
-- 必ず「〜を確認する」「〜を検討する」「〜に注意する」「〜を共有する」等のアクション動詞で終わること
-- 特定の記事に縛られず、今日のニュース全体を俯瞰してPMO/PJMOが取るべき行動を示す
-- セキュリティ関連があれば必ず最初に入れる
-- 省庁内での横展開・情報共有が必要なものは明示する
-- 「重要」「画期的」等の主観的形容詞は使わない
-- 事実ベースで具体的に（例: 「AI調達仕様書のセキュリティ要件を最新のIPA推奨に照合する」）
-
-対象ニューストピック:
-${inputJson}
-
-以下のJSON形式のみで出力すること（説明文・コードブロック記号は不要）:
-{
-  "actions": [
-    "アクション箇条書き1",
-    "アクション箇条書き2",
-    "アクション箇条書き3"
-  ]
-}`;
-
-  try {
-    const text = await callGemini(model, prompt);
-    const result = parseJsonFromText(text);
-    return Array.isArray(result.actions)
-      ? result.actions.filter((a) => typeof a === 'string')
-      : null;
-  } catch (err) {
-    console.warn(`[WARN] ニューストピックブリーフ生成エラー: ${err.message}`);
-    return null;
-  }
-}
+// ── (C)(D) 今日のニュース要約・アクションブリーフ生成は
+// gemini-utils.js の generateSummaryPoints / generateActionBrief（regenerate-brief.js と共通実装）を使用 ──
 
 // ── tags.json 更新 ────────────────────────────────────────────────────
 function updateTagsIndex(date, dateJa, dayData) {
@@ -616,17 +518,24 @@ async function main() {
 
   if (hasApiKey) {
     try {
-      // ③ 政府記事を要約
+      // ③④ 政府記事の要約とニュースのフィルタリングは互いに独立しているため並列実行。
+      // Promise.allSettled で両方の完了を待ってから結果を確定させる（Promise.race的に
+      // 片方だけ待って抜けると、もう一方の内部リトライがバックグラウンドで残り続けて
+      // プロセス終了を遅らせるため使わない）
       console.log('[INFO] 政府記事を要約中...');
-      summarizedGov = await summarizeGovArticles(govArticlesRaw, model);
-
-      // ④ ニュースをフィルタリング・要約
       console.log('[INFO] ニュース記事をフィルタリング中...');
-      newsTopics = await filterAndSummarizeNews(newsDeduped, model, 10);
+      const [govResult, newsResult] = await Promise.allSettled([
+        summarizeGovArticles(govArticlesRaw, model),
+        filterAndSummarizeNews(newsDeduped, model, 10),
+      ]);
+      if (govResult.status === 'rejected') throw govResult.reason;
+      if (newsResult.status === 'rejected') throw newsResult.reason;
+      summarizedGov = govResult.value;
+      newsTopics = newsResult.value;
       geminiOk = true;
     } catch (err) {
-      const is429 = String(err.message).includes('429');
-      console.warn(`[WARN] Gemini APIエラー${is429 ? '（レート制限）' : ''}: ${err.message}`);
+      const label = err.zeroQuota ? '（クォータ割当0・要アカウント確認）' : err.budgetExceeded ? '（1実行あたりの呼び出し上限に到達）' : err.rateLimited ? '（レート制限）' : '';
+      console.warn(`[WARN] Gemini APIエラー${label}: ${err.message}`);
       summarizedGov = govArticlesRaw.map(buildFallbackArticle);
       newsTopics = newsDeduped.slice(0, 10).map((a) => ({
         title: a.title,
@@ -751,10 +660,17 @@ async function main() {
   let newsSummary = null;
   let newsTopicsBrief = null;
   if (hasApiKey && geminiOk) {
-    console.log('[INFO] 今日のニュース要約を生成中...');
-    newsSummary = await generateNewsSummary(heroArticle, subArticles, newsTopics, model);
-    console.log('[INFO] 今日のアクションブリーフを生成中...');
-    newsTopicsBrief = await generateNewsTopicsBrief(newsTopics, model);
+    try {
+      console.log('[INFO] 今日のニュース要約を生成中...');
+      newsSummary = await generateSummaryPoints(buildSummaryInput(heroArticle, subArticles, newsTopics), model);
+      console.log('[INFO] 今日のアクションブリーフを生成中...');
+      newsTopicsBrief = await generateActionBrief(newsTopics, model);
+    } catch (err) {
+      // クォータ0・呼び出し上限到達はここで打ち切り、regenerate-brief.js に委譲する。
+      // 他のステップ（政府記事・ニューストピック）は既に確定済みなのでスクリプト全体は失敗させない。
+      const label = err.zeroQuota ? '（クォータ割当0・要アカウント確認）' : err.budgetExceeded ? '（1実行あたりの呼び出し上限に到達）' : '';
+      console.warn(`[WARN] summary/briefエラー${label}: ${err.message}`);
+    }
   } else if (!geminiOk) {
     console.log('[INFO] メインAPI処理が未成功のため、summary/brief は regenerate-brief.js に委譲');
   }
